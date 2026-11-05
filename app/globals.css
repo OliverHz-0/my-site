@@ -23,3 +23,215 @@ button, input { font: inherit; padding: 0.5rem 0.75rem; }
 button { cursor: pointer; }
 .login { display: flex; flex-direction: column; gap: 0.75rem; max-width: 320px; }
 .error { color: light-dark(#b3261e, #f2b8b5); }
+
+/* 每日精选 */
+:root {
+  --accent: light-dark(#0b6e63, #5fd0bd);
+  --accent-soft: light-dark(#e3f3f0, #16332f);
+  --border-strong: light-dark(#a9a9a3, #62625e);
+  --bone: light-dark(#ecece8, #2a2a28);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.digest-intro { margin: 0 0 1.25rem; }
+
+.digest-datenav,
+.digest-datenav-placeholder {
+  min-height: 4.25rem;
+  border-block: 1px solid var(--border);
+}
+.digest-datenav {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0;
+}
+.digest-current { display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.35; }
+.digest-current time { font-weight: 600; font-variant-numeric: tabular-nums; }
+.digest-current-sub { font-size: 0.8125rem; color: var(--muted); }
+.digest-current-sub a { text-underline-offset: 2px; }
+
+.digest-daylink,
+.digest-action,
+.digest-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: border-color 120ms ease, background-color 120ms ease, transform 80ms ease;
+}
+.digest-daylink:hover,
+.digest-action:hover,
+.digest-save:hover { border-color: var(--border-strong); }
+.digest-daylink:active,
+.digest-action:active,
+.digest-save:active { transform: translateY(1px); }
+.digest-daylink[aria-disabled="true"] {
+  border-color: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+.digest-daylink svg,
+.digest-save svg {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.digest-daylink:focus-visible,
+.digest-action:focus-visible,
+.digest-save:focus-visible,
+.digest-title a:focus-visible,
+.digest-current a:focus-visible,
+.digest-notice button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.digest-list { list-style: none; margin: 0; padding: 0; }
+.digest-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.digest-item p { margin: 0; }
+.digest-meta { font-size: 0.875rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.digest-journal { color: var(--accent); font-weight: 600; }
+.digest-title {
+  margin: 0.25rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.digest-title a {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 120ms ease;
+}
+.digest-title a:hover { text-decoration-color: currentColor; }
+.digest-title-end { white-space: nowrap; }
+.digest-external {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-left: 0.25rem;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.digest-authors { font-size: 0.875rem; color: var(--muted); overflow-wrap: anywhere; }
+.digest-item .digest-summary { margin-top: 0.75rem; }
+.digest-item .digest-why {
+  margin-top: 0.625rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--accent);
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+.digest-why-label { margin-right: 0.5rem; color: CanvasText; font-weight: 600; }
+
+.digest-save { min-width: 6rem; cursor: pointer; }
+.digest-save[data-saved="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.digest-save[data-saved="true"] svg { fill: currentColor; }
+.digest-save[aria-busy="true"] { cursor: progress; opacity: 0.65; }
+
+.digest-state { padding: 3rem 0; border-bottom: 1px solid var(--border); text-align: center; }
+.digest-state h2 { margin: 0 0 0.25rem; }
+.digest-state p { margin: 0; color: var(--muted); }
+.digest-state-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 1.25rem; }
+.digest-action { min-width: 6rem; cursor: pointer; }
+
+.digest-skeleton-item { padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
+.digest-bone { height: 0.875rem; margin-top: 0.625rem; border-radius: 3px; background: var(--bone); }
+.digest-bone:first-child { margin-top: 0; }
+.digest-bone-title { height: 1.25rem; }
+.digest-skeleton { animation: digest-appear 200ms ease 150ms both; }
+.digest-bone { animation: digest-pulse 1.4s ease-in-out infinite; }
+@keyframes digest-appear { from { opacity: 0; } to { opacity: 1; } }
+@keyframes digest-pulse { 50% { opacity: 0.55; } }
+
+.digest-notice-region {
+  position: fixed;
+  inset-inline: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.digest-notice {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 34rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: Canvas;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.18);
+  pointer-events: auto;
+}
+.digest-notice p { margin: 0; font-size: 0.9375rem; overflow-wrap: anywhere; }
+.digest-notice button {
+  flex: none;
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .digest-item { grid-template-columns: minmax(0, 1fr); }
+  .digest-save { justify-self: start; margin-top: 1rem; }
+  .digest-daylink { padding: 0 0.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .digest-skeleton,
+  .digest-bone { animation: none; }
+  .digest-daylink,
+  .digest-action,
+  .digest-save,
+  .digest-title a { transition: none; }
+  .digest-daylink:active,
+  .digest-action:active,
+  .digest-save:active { transform: none; }
+}
