@@ -2,7 +2,7 @@
 
 个人网站：公开主页 + 需要登录的私人工作区（科研区、学习区、工作区）。
 
-当前是骨架阶段：登录和页面路由是真实的，业务接口返回样例数据，尚未接入数据库、论文抓取和 AI。
+当前进度：登录、页面路由和每日精选的读取与收藏是真实的（SQLite），其余业务接口返回样例数据，尚未接入论文抓取和 AI。每日精选目前只有 `npm run db:seed` 写入的示例数据。
 
 ## 启动
 
@@ -11,6 +11,7 @@
 ```bash
 npm install
 cp .env.example .env.local   # 然后修改里面的密码和密钥
+npm run db:seed              # 写入每日精选的示例数据
 npm run dev
 ```
 
@@ -22,6 +23,8 @@ npm run dev
 | `npm run build` | 生产构建 |
 | `npm run start` | 运行生产构建（需先 build；此模式下 cookie 带 Secure，线上需要 HTTPS） |
 | `npm run typecheck` | 类型检查 |
+| `npm test` | 运行接口和数据库测试（使用临时数据库，不碰 `data/app.db`） |
+| `npm run db:seed` | 写入固定的示例数据（11-05、11-04 各 5 条，11-03 无数据）。**会重置全部精选和收藏**，接入真实数据后不要再运行 |
 
 ## 技术栈
 
@@ -29,7 +32,7 @@ npm run dev
 | --- | --- | --- |
 | 前端和后端 | Next.js + TypeScript，一个进程同时提供页面和 API | 已搭建 |
 | 登录 | 单用户密码 + 签名 cookie | 已搭建 |
-| 数据库 | SQLite，单文件，个人使用足够 | 待接入 |
+| 数据库 | SQLite（Node 内置 `node:sqlite`），路径由 `DATABASE_PATH` 决定，默认 `data/app.db` | 每日精选已接入 |
 | 每日精选 | 定时脚本抓取 PubMed、arXiv 和期刊 RSS，由 AI 筛选并生成摘要 | 待接入 |
 | AI 润色 | 服务端调用 Claude API | 待接入 |
 
@@ -64,7 +67,7 @@ docs/API.md              API 约定
 
 需要留意：
 
-- 业务数据全是样例，写入不会保存。
+- 除每日精选外，业务数据全是样例，写入不会保存。
 - `AGENTS.md` 由 `next dev` 自动生成，删除后还会再生成，所以一并提交。
 - 上线前要给登录接口加尝试次数限制，并换掉 `.env.example` 里的默认密码和密钥。
 - 学习区目前只存链接，电子书文件上传以后再做。
@@ -73,8 +76,8 @@ docs/API.md              API 约定
 
 ## 下一步
 
-1. 接入 SQLite，替换样例数据。
-2. 实现每日 5 篇精选。
+1. 实现每日 5 篇精选的抓取和 AI 筛选。
+2. 把其余接口从样例换成 SQLite。
 
 每日精选的期刊范围是待确认的初步名单：Nature、Science、Cell、NEJM、The Lancet、Nature Medicine、Nature Biomedical Engineering、Science Robotics、Science Translational Medicine、npj Digital Medicine，再加上 arXiv 预印本。
 

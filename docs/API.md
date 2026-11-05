@@ -34,8 +34,8 @@
 | POST | `/api/auth/logout` | 退出 | 公开 | 已实现 |
 | GET | `/api/auth/me` | 查询登录状态 | 公开 | 已实现 |
 | GET | `/api/public/publications` | 主页展示的已发表文章 | 公开 | 样例 |
-| GET | `/api/research/digests?date=` | 某天的精选，默认当天 | 登录 | 样例 |
-| PATCH | `/api/research/digests/:id` | 收藏或取消收藏 | 登录 | 样例 |
+| GET | `/api/research/digests?date=` | 某天的精选，默认当天（Asia/Shanghai） | 登录 | 已实现 |
+| PATCH | `/api/research/digests/:id` | 收藏或取消收藏 | 登录 | 已实现 |
 | GET, POST | `/api/research/drafts` | 选题和草稿的列表、新建 | 登录 | 样例 |
 | GET, PATCH, DELETE | `/api/research/drafts/:id` | 单篇读取、修改、删除 | 登录 | 样例 |
 | POST | `/api/research/drafts/:id/polish` | AI 润色 | 登录 | 样例 |
@@ -84,7 +84,12 @@
 
 ### 每日资讯
 
-`GET /api/research/digests?date=2026-11-05`，每天最多 5 条。
+`GET /api/research/digests?date=2026-11-05`，每天最多 5 条，顺序由服务端决定。
+
+- `date` 可省略，默认按 Asia/Shanghai 取当天。
+- `date` 格式非法或日期不存在（如 `2026-02-30`）时返回 400 `INVALID_REQUEST`。
+- 当天没有数据时返回 200 和空 `items`。
+- `doi` 可能为 `null`，比如没有 DOI 的预印本。
 
 ```json
 {
@@ -106,7 +111,7 @@
 }
 ```
 
-`PATCH /api/research/digests/:id` 的请求为 `{ "saved": true }`，返回更新后的条目。
+`PATCH /api/research/digests/:id` 的请求为 `{ "saved": true }` 或 `{ "saved": false }`，返回更新后的完整条目，重复设置同一个值也成功。请求体不合法或 `saved` 不是布尔值时返回 400 `INVALID_REQUEST`，条目不存在时返回 404 `NOT_FOUND`。
 
 ### 选题与草稿
 
