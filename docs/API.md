@@ -1,6 +1,6 @@
 # API 约定 v0
 
-状态说明：**已实现** 表示真实逻辑；**样例** 表示目前返回固定样例数据，响应头带 `X-Mock: true`，字段和本文一致，前端可以直接对接；**待实现** 表示约定已冻结，后端正在开发。
+状态说明：**已实现** 表示真实逻辑；**样例** 表示目前返回固定样例数据，响应头带 `X-Mock: true`，字段和本文一致，前端可以直接对接。
 
 ## 通用规则
 
@@ -40,27 +40,27 @@
 | GET, PATCH, DELETE | `/api/research/submissions/:id` | 单篇读取、修改、删除 | 样例 |
 | GET, POST | `/api/learning/resources?type=` | 学习资料的列表、新建 | 样例 |
 | GET, PATCH, DELETE | `/api/learning/resources/:id` | 单条读取、修改、删除 | 样例 |
-| GET, POST | `/api/tasks` | 跨区任务的列表（可按归属、项目、状态、来源筛选）、新建 | 待实现 |
-| GET, PATCH, DELETE | `/api/tasks/:id` | 单个任务读取、修改、删除 | 待实现 |
-| GET, POST | `/api/projects?area=` | 项目的列表、新建（本轮用于公司项目） | 待实现 |
-| GET, PATCH, DELETE | `/api/projects/:id` | 单个项目读取、修改、删除 | 待实现 |
-| GET | `/api/life/weights?from=&to=` | 体重记录列表 | 待实现 |
-| PUT, DELETE | `/api/life/weights/:date` | 按日期写入或更正、删除体重 | 待实现 |
-| GET | `/api/life/weights/weekly?weeks=` | 体重周趋势 | 待实现 |
-| GET | `/api/life/sleep?from=&to=` | 睡眠记录列表 | 待实现 |
-| PUT, DELETE | `/api/life/sleep/:date` | 按日期写入或更正、删除睡眠 | 待实现 |
-| GET | `/api/life/sleep/weekly?weeks=` | 睡眠周统计 | 待实现 |
-| GET, PUT | `/api/life/training/cycle` | 训练部位循环顺序 | 待实现 |
-| GET, POST | `/api/life/training/sessions?from=&to=` | 训练和休息记录的列表、新建 | 待实现 |
-| PATCH, DELETE | `/api/life/training/sessions/:id` | 更正、删除一次记录 | 待实现 |
-| GET | `/api/life/training/plan` | 上次实际训练和下次计划 | 待实现 |
-| PUT, DELETE | `/api/life/training/next` | 手动指定、取消下一次的部位 | 待实现 |
-| GET, POST | `/api/company/transactions?month=&type=&category=` | 收支明细的列表、新建 | 待实现 |
-| GET, PATCH, DELETE | `/api/company/transactions/:id` | 单条收支读取、更正、删除 | 待实现 |
-| GET | `/api/company/finance/summary?month=` | 某月收入、支出、结余和分类汇总 | 待实现 |
-| GET | `/api/company/finance/monthly?from=&to=` | 多个月的收支汇总 | 待实现 |
-| GET, POST | `/api/company/leads?status=` | 选品线索的列表、新建 | 待实现 |
-| GET, PATCH, DELETE | `/api/company/leads/:id` | 单条线索读取、修改、删除 | 待实现 |
+| GET, POST | `/api/tasks` | 跨区任务的列表（可按归属、项目、状态、来源筛选）、新建 | 已实现 |
+| GET, PATCH, DELETE | `/api/tasks/:id` | 单个任务读取、修改、删除 | 已实现 |
+| GET, POST | `/api/projects?area=` | 项目的列表、新建（本轮用于公司项目） | 已实现 |
+| GET, PATCH, DELETE | `/api/projects/:id` | 单个项目读取、修改、删除 | 已实现 |
+| GET | `/api/life/weights?from=&to=` | 体重记录列表 | 已实现 |
+| PUT, DELETE | `/api/life/weights/:date` | 按日期写入或更正、删除体重 | 已实现 |
+| GET | `/api/life/weights/weekly?weeks=` | 体重周趋势 | 已实现 |
+| GET | `/api/life/sleep?from=&to=` | 睡眠记录列表 | 已实现 |
+| PUT, DELETE | `/api/life/sleep/:date` | 按日期写入或更正、删除睡眠 | 已实现 |
+| GET | `/api/life/sleep/weekly?weeks=` | 睡眠周统计 | 已实现 |
+| GET, PUT | `/api/life/training/cycle` | 训练部位循环顺序 | 已实现 |
+| GET, POST | `/api/life/training/sessions?from=&to=` | 训练和休息记录的列表、新建 | 已实现 |
+| PATCH, DELETE | `/api/life/training/sessions/:id` | 更正、删除一次记录 | 已实现 |
+| GET | `/api/life/training/plan` | 上次实际训练和下次计划 | 已实现 |
+| PUT, DELETE | `/api/life/training/next` | 手动指定、取消下一次的部位 | 已实现 |
+| GET, POST | `/api/company/transactions?month=&type=&category=` | 收支明细的列表、新建 | 已实现 |
+| GET, PATCH, DELETE | `/api/company/transactions/:id` | 单条收支读取、更正、删除 | 已实现 |
+| GET | `/api/company/finance/summary?month=` | 某月收入、支出、结余和分类汇总 | 已实现 |
+| GET | `/api/company/finance/monthly?from=&to=` | 多个月的收支汇总 | 已实现 |
+| GET, POST | `/api/company/leads?status=` | 选品线索的列表、新建 | 已实现 |
+| GET, PATCH, DELETE | `/api/company/leads/:id` | 单条线索读取、修改、删除 | 已实现 |
 
 资源接口的约定相同：`POST` 返回 201 和新建的对象，`PATCH` 只传要改的字段并返回完整对象，`GET` 单条也返回完整对象。服务端生成的 `id`、`createdAt`、`updatedAt` 不需要前端传。
 
@@ -217,6 +217,7 @@
 }
 ```
 
+- `POST /api/projects` 必填 `name` 和 `area`，`area` 的取值和任务相同。
 - `status`：`active` | `paused` | `done`，新建时默认 `active`。
 - `GET /api/projects?area=company` 按 `createdAt` 降序。
 - 删除项目时，引用它的任务 `projectId` 置为 `null`，任务本身保留。
@@ -236,7 +237,7 @@
 
 - `PUT /api/life/weights/:date` 请求 `{ "kg": 68.4, "note": "" }`。`kg` 在 20 到 300 之间，保存时四舍五入到 1 位小数。返回保存后的记录；新建返回 201，覆盖返回 200。
 - `PUT /api/life/sleep/:date` 请求 `{ "minutes": 445, "note": "" }`。`minutes` 是 0 到 1440 的整数。返回规则同上。
-- `date` 不能晚于今天（Asia/Shanghai），否则 400。
+- 不能晚于今天（Asia/Shanghai）的日期：体重、睡眠和训练记录的 `date`，收支的 `date`，线索的 `observedOn`，否则 400。任务和项目的 `due` 可以是未来日期。
 - `GET /api/life/weights?from=&to=` 和 `GET /api/life/sleep?from=&to=` 按日期降序；`from`、`to` 可省略，省略时返回最近 90 天。
 - 周统计按周一开始的自然周计算，`weeks` 默认 8、最大 52，包含本周，按 `weekStart` 升序，没有记录的周也返回，数值为 `null`：
 
@@ -274,6 +275,7 @@
 - `kind`：`workout`（实际训练）| `rest`（休息或顺延，`part` 为 `null`）。
 - `workout` 必须带 `part`，可以是循环外的部位（临时换部位）。
 - 同一天可以有多条记录。`date` 不能晚于今天。
+- `GET /api/life/training/sessions?from=&to=` 省略范围时返回最近 90 天，按 `date` 降序，同一天按 `createdAt` 降序。
 
 `GET /api/life/training/plan`：
 
@@ -288,6 +290,8 @@
 下次计划的计算规则，按顺序判断：
 
 1. 设置了手动指定（`PUT /api/life/training/next`，请求 `{ "part": "肩" }`）时，`next` 就是它，`reason` 为 `"manual"`。下一次 `workout` 记录写入后，手动指定自动清除。`DELETE /api/life/training/next` 取消手动指定。
+
+   `PUT` 成功返回 200，内容和 `GET /api/life/training/plan` 相同；`part` 是 1 到 30 个字的非空字符串，可以不在循环里，循环为空时也能指定。`DELETE` 返回 `{ "ok": true }`，没有手动指定时也一样。
 2. 循环为空时，`next` 为 `null`。
 3. 找到最近一次 `part` 在循环里的 `workout` 记录（按 `date`、再按 `createdAt` 取最新），`next` 是循环里它的下一个部位，到末尾回到第一个，`reason` 为 `"cycle"`。
 4. 没有这样的记录时，`next` 是循环的第一个部位，`reason` 为 `"start"`。
@@ -340,7 +344,7 @@
 
 `byCategory` 先按 `type`（收入在前），再按金额降序。
 
-`GET /api/company/finance/monthly?from=2026-06&to=2026-11` 返回这段时间每个月的 `{ month, incomeCents, expenseCents, balanceCents, count }`，按月份升序，没有记录的月份数值为 0。最多 24 个月。
+`GET /api/company/finance/monthly?from=2026-06&to=2026-11` 返回这段时间每个月的 `{ month, incomeCents, expenseCents, balanceCents, count }`，按月份升序，没有记录的月份数值为 0。最多 24 个月。`to` 省略时为本月，`from` 省略时为 `to` 往前 5 个月（即默认近 6 个月）；`from` 晚于 `to` 或超过 24 个月返回 400。
 
 ### 选品线索
 
@@ -365,7 +369,8 @@
 }
 ```
 
-- `product` 必填。`sourceUrl` 可为空字符串；不为空时必须是 `http` 或 `https` 地址，否则 400。
+- `product` 必填；`observedOn` 可选，缺省为今天。没写必填的字符串字段（`sourceName`、`sourceUrl`、`questions`、`nextStep`、各信号的 `note`，以及各类记录的 `note`）缺省为空字符串。
+- `sourceUrl` 可为空字符串；不为空时必须是 `http` 或 `https` 地址，否则 400。
 - `signals` 的三项分别对应浏览、搜索和成交信号，`level` 取 `unknown` | `low` | `medium` | `high`，新建时缺省为 `unknown`。
 - `status`：`watching`（观察中）| `validating`（验证中）| `adopted`（已选定）| `dropped`（放弃），新建时默认 `watching`。
 - `openTaskCount`：由服务端计算，是 `source` 指向这条线索、且 `state` 为 `todo` 或 `in_progress` 的任务数。
