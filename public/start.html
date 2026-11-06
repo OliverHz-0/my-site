@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hzzz_0's Paradise is a workbench for personal scientific research and tasks.">
+  <title>Hzzz_0's Paradise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f7f5;
+      --ink: #111111;
+      --mute: #9a9a9a;
+      --sub: #7b7b7b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 660px;
+      overflow: hidden;
+    }
+
+    #dots {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .status-bar {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px 14px;
+      padding: 36px 12px 0;
+      color: #6f6f6f;
+      font-size: 13px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .weather {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding-inline-start: 14px;
+      border-inline-start: 1px solid #d6d6d3;
+      white-space: nowrap;
+    }
+
+    .weather svg[hidden] { display: none; }
+
+    .weather-source {
+      color: inherit;
+      font-size: 10px;
+      text-decoration-color: #b5b5b2;
+      text-underline-offset: 2px;
+    }
+
+    .pill {
+      display: inline-block;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 500;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    a:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 4px;
+    }
+
+    .copy {
+      position: absolute;
+      z-index: 3;
+      top: 24.5%;
+      left: 50%;
+      width: min(92vw, 720px);
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(38px, 3.75vw, 68px);
+      font-weight: 500;
+      letter-spacing: -.035em;
+      line-height: 1.04;
+    }
+
+    @media (min-width: 320px) {
+      h1 { white-space: nowrap; }
+    }
+
+    h1 span {
+      display: block;
+      color: var(--mute);
+    }
+
+    .copy p {
+      max-width: 340px;
+      margin: 20px auto 0;
+      color: var(--sub);
+      font-size: clamp(13px, 1.02vw, 15.5px);
+      line-height: 1.4;
+    }
+
+    .cta {
+      position: relative;
+      isolation: isolate;
+      display: inline-block;
+      margin-top: clamp(34px, 3.6vw, 52px);
+    }
+
+    .cta::before {
+      position: absolute;
+      z-index: -1;
+      right: 10%;
+      bottom: -6px;
+      left: 10%;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #ffcf5a, #7dffa8, #5ad7ff, #9b7bff, #ff6fd8, #ffb36b);
+      filter: blur(9px);
+      opacity: .85;
+      content: "";
+      transition: bottom .3s, filter .3s, opacity .3s;
+    }
+
+    .cta .pill {
+      padding: 11px 20px;
+      font-size: 13.5px;
+      transition: transform .3s;
+    }
+
+    .cta:hover::before {
+      bottom: -9px;
+      filter: blur(12px);
+      opacity: 1;
+    }
+
+    .cta:hover .pill { transform: translateY(-1px); }
+
+    @media (max-width: 760px) {
+      .status-bar { padding-top: 22px; font-size: 12px; }
+      .copy { top: 20%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cta .pill, .cta::before { transition: none; }
+      .cta:hover .pill { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero" id="hero" aria-labelledby="headline">
+      <canvas id="dots" aria-hidden="true"></canvas>
+      <div class="status-bar">
+        <time id="today"></time>
+        <span class="weather">
+          <svg id="weather-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+            role="img" hidden><path/></svg>
+          <span id="weather-text">Taipei · Loading weather…</span>
+          <a class="weather-source" href="https://open-meteo.com/" hidden>Open-Meteo</a>
+        </span>
+      </div>
+      <div class="copy">
+        <h1 id="headline"><span>Hzzz‘s</span> workbench</h1>
+        <p>We’re not building another platform. We’re building a place where people belong.</p>
+        <div class="cta"><a class="pill" href="/desk#/overview">start working！</a></div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    const timeZone = 'Asia/Taipei';
+    const today = document.querySelector('#today');
+    const dateLabel = new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short', month: 'short', day: 'numeric' });
+    const dateValue = new Intl.DateTimeFormat('sv-SE', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' });
+
+    function updateDate() {
+      const now = new Date();
+      today.textContent = dateLabel.format(now);
+      today.dateTime = dateValue.format(now);
+    }
+
+    const weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=25.033&longitude=121.5654&current=temperature_2m,weather_code,is_day';
+    const weatherText = document.querySelector('#weather-text');
+    const weatherIcon = document.querySelector('#weather-icon');
+    const weatherPath = weatherIcon.querySelector('path');
+    const weatherSource = document.querySelector('.weather-source');
+    const cloud = 'M5 16a3.5 3.5 0 1 1 .9-6.9A5 5 0 0 1 15.5 8H17a4 4 0 1 1 0 8Z';
+
+    function weatherSymbol(code, isDay) {
+      if (code === 0) {
+        return isDay === 1
+          ? ['Clear', 'M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4m0-14.2-1.4 1.4M6.3 17.7l-1.4 1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z']
+          : ['Clear', 'M20.7 14.2A8.5 8.5 0 0 1 9.8 3.3 8.5 8.5 0 1 0 20.7 14.2Z'];
+      }
+      if (code <= 3) return ['Cloudy', cloud];
+      if (code <= 48) return ['Fog', cloud + 'M5 19h14m-12 3h10'];
+      if (code >= 95) return ['Thunderstorms', cloud + 'M13 14l-3 5h4l-2 3'];
+      if ((code >= 71 && code <= 77) || code === 85 || code === 86) {
+        return ['Snow', cloud + 'M7 20h.01m5 1h.01m5-1h.01'];
+      }
+      return ['Rain', cloud + 'M8 19l-1 2m6-2-1 2m6-2-1 2'];
+    }
+
+    async function updateWeather() {
+      try {
+        const response = await fetch(weatherUrl, { signal: AbortSignal.timeout(8000) });
+        if (!response.ok) throw new Error('Weather request failed');
+        const { current } = await response.json();
+        if (!Number.isFinite(current?.temperature_2m) || !Number.isInteger(current.weather_code)) {
+          throw new Error('Weather data unavailable');
+        }
+        const [condition, path] = weatherSymbol(current.weather_code, current.is_day);
+        weatherText.textContent = 'Taipei · ' + Math.round(current.temperature_2m) + '°C';
+        weatherPath.setAttribute('d', path);
+        weatherIcon.setAttribute('aria-label', condition);
+        weatherIcon.removeAttribute('hidden');
+        weatherSource.hidden = false;
+      } catch {
+        weatherText.textContent = 'Taipei · Weather unavailable';
+        weatherIcon.setAttribute('hidden', '');
+        weatherSource.hidden = true;
+      }
+    }
+
+    updateDate();
+    updateWeather();
+    setInterval(updateDate, 60_000);
+    setInterval(updateWeather, 15 * 60_000);
+  </script>
+
+  <script>
+    const SHEET_URL = '/images/hand-sheet.webp';
+    const SRC = {
+      LA: [0, .06, .47, .40],
+      RA: [.53, .06, .47, .40],
+      LB: [0, .55, .47, .40],
+      RB: [.53, .55, .47, .40],
+    };
+    const LOOP = 20;
+    const LEVELS = [0, .26, .52, .78, 1];
+
+    const hero = document.querySelector('.hero');
+    const canvas = document.querySelector('#dots');
+    const ctx = canvas.getContext('2d');
+    const fA = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+    const fB = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+
+    let tiles, seeds, fades;
+    let W, H, step, rowStep, cols, rows, R, hw, hh, cy;
+    let t0, frameId, lastTime = 0;
+
+    function clamp(value, min = 0, max = 1) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function hash(a, b) {
+      const n = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+      return n - Math.floor(n);
+    }
+
+    function smooth(a, b, x) {
+      const n = clamp((x - a) / (b - a));
+      return n * n * (3 - 2 * n);
+    }
+
+    function mixAt(t, on, off, duration) {
+      return smooth(on, on + duration, t) * (1 - smooth(off, off + duration, t));
+    }
+
+    function resize() {
+      W = hero.clientWidth;
+      H = hero.clientHeight;
+      const dpr = Math.min(2, window.devicePixelRatio);
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#0d0d0d';
+
+      const portrait = H > W;
+      step = Math.max(5, W / 205);
+      rowStep = step * 2.05;
+      cols = Math.ceil(W / step);
+      rows = Math.ceil(H / rowStep);
+      R = step * .46;
+      hw = W * (portrait ? .66 : .53);
+      hh = hw * (.40 * 1520) / (.47 * 2688);
+      cy = H * (portrait ? .66 : .54);
+
+      for (const field of [fA, fB]) {
+        field.canvas.width = cols;
+        field.canvas.height = rows;
+        field.imageSmoothingQuality = 'high';
+      }
+
+      // The dissolve order and fade masks depend only on the grid.
+      seeds = new Float64Array(cols * rows);
+      fades = new Float64Array(cols * rows);
+      for (let j = 0; j < rows; j++) {
+        const rowBias = .45 * hash(j * 3.1, 7.7);
+        const ey = ((j + .5) * rowStep / H - (portrait ? .33 : .385)) / .085;
+        for (let i = 0; i < cols; i++) {
+          const cell = j * cols + i;
+          const cx = Math.abs((i + .5) / cols - .5);
+          const ex = cx / (portrait ? .44 : .2);
+          seeds[cell] = .55 * hash(i, j) + rowBias;
+          fades[cell] = smooth(.035, .11, cx) * smooth(.85, 1.25, Math.hypot(ex, ey));
+        }
+      }
+
+      render(lastTime);
+    }
+
+    function drawHand(field, tile, angle, left) {
+      const ph = left ? 0 : Math.PI;
+      const reach = (.035 * Math.sin(angle + ph) + .012 * Math.sin(2 * angle + 1.3 + ph)) * W;
+      const scale = 1 + .07 * Math.sin(angle + .9 + ph);
+      const rot = (left ? 1 : -1) * .045 * Math.sin(angle + 2.1 + ph);
+      const x = left ? reach - W * .045 : W - hw + W * .045 - reach;
+      const pivotX = left ? 0 : W;
+
+      field.save();
+      field.scale(cols / W, rows / H);
+      field.translate(pivotX, cy);
+      field.rotate(rot);
+      field.scale(scale, scale);
+      field.translate(-pivotX, -cy);
+      field.drawImage(tile, x, cy - hh / 2, hw, hh);
+      field.restore();
+    }
+
+    function samplePose(field, leftTile, rightTile, angle) {
+      field.fillStyle = '#fff';
+      field.fillRect(0, 0, cols, rows);
+      drawHand(field, leftTile, angle, true);
+      drawHand(field, rightTile, angle, false);
+      return field.getImageData(0, 0, cols, rows).data;
+    }
+
+    function render(time) {
+      if (!tiles) return;
+      const phase = time % LOOP;
+      const t = phase < 0 ? phase + LOOP : phase;
+      lastTime = t;
+
+      const angle = 2 * Math.PI * t / LOOP;
+      const poseA = samplePose(fA, tiles.LA, tiles.RA, angle);
+      const poseB = samplePose(fB, tiles.LB, tiles.RB, angle);
+      const mixLeft = mixAt(t, 6.2, 14.6, 1.6);
+      const mixRight = mixAt(t, 2.4, 10.4, 1.6);
+      const tick = Math.floor(t * 7);
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.beginPath();
+      for (let j = 0; j < rows; j++) {
+        const shift = hash(j, tick) > .965 ? Math.round((hash(tick, j) - .5) * 8) : 0;
+        const y = (j + .5) * rowStep;
+        for (let i = 0; i < cols; i++) {
+          const cell = j * cols + i;
+          const seed = seeds[cell];
+          const mix = i < cols / 2 ? mixLeft : mixRight;
+          const sample = 4 * (j * cols + clamp(i - shift, 0, cols - 1));
+          const lum = (seed < mix ? poseB[sample] : poseA[sample]) / 255;
+          let v = clamp((1 - lum - .16) / .42);
+          if (v === 0 || fades[cell] === 0) continue;
+
+          const front = Math.abs(seed - mix);
+          if (mix > .001 && mix < .999 && front < .12) {
+            v *= front / .12;
+            if (hash(i + tick, j) <= .4) v *= .3;
+          }
+          v *= (.86 + .14 * Math.sin(t * 3.2 + seed * 40)) * fades[cell];
+
+          let size = LEVELS.length - 1;
+          while (size > 0 && v < LEVELS[size] - .13) size--;
+          if (size === 0) continue;
+
+          const radius = R * (size === 1 ? .38 : LEVELS[size]);
+          const x = (i + .5) * step;
+          ctx.moveTo(x + radius, y);
+          ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        }
+      }
+      ctx.fill();
+    }
+
+    function animate(now) {
+      t0 ??= now;
+      render((now - t0) / 1000);
+      frameId = requestAnimationFrame(animate);
+    }
+
+    function syncMotion() {
+      if (!tiles) return;
+      cancelAnimationFrame(frameId);
+      t0 = undefined;
+      if (motion.matches) {
+        render(0);
+      } else {
+        frameId = requestAnimationFrame(animate);
+      }
+    }
+
+    window.__render = render;
+    new ResizeObserver(resize).observe(hero);
+    motion.addEventListener('change', syncMotion);
+
+    const sheet = new Image();
+    sheet.crossOrigin = 'anonymous';
+    sheet.onload = () => {
+      tiles = Object.fromEntries(Object.entries(SRC).map(([name, [x, y, w, h]]) => {
+        const sw = w * sheet.naturalWidth;
+        const sh = h * sheet.naturalHeight;
+        const tile = document.createElement('canvas');
+        tile.width = 420;
+        tile.height = Math.round(tile.width * sh / sw);
+        const tileCtx = tile.getContext('2d');
+        tileCtx.imageSmoothingQuality = 'high';
+        tileCtx.drawImage(sheet, x * sheet.naturalWidth, y * sheet.naturalHeight,
+          sw, sh, 0, 0, tile.width, tile.height);
+        return [name, tile];
+      }));
+      resize();
+      syncMotion();
+    };
+    sheet.onerror = () => console.error('The dot-matrix hand sheet could not be loaded.');
+    sheet.src = SHEET_URL;
+  </script>
+</body>
+</html>

@@ -19,7 +19,7 @@ npm run db:seed              # 写入每日精选的示例数据
 npm run dev
 ```
 
-打开 http://127.0.0.1:3000 。
+打开 http://127.0.0.1:3000 是启动页，点「start working！」进入工作台；也可以直接打开 http://127.0.0.1:3000/desk 。
 
 **服务只监听本机 127.0.0.1**，同一局域网的其他设备打不开。因为没有登录，任何能访问它的人都能读写全部数据，所以不要改成监听其他地址；要在局域网或公网使用，必须先加回访问控制。
 
@@ -36,7 +36,10 @@ npm run dev
 
 ## 修改前端
 
-直接编辑 `public/` 下的文件，刷新浏览器就能看到，不需要构建。页面用 `#/overview` 这类 hash 地址切换，路由和页面逻辑都在 `public/scripts/app.js`。
+直接编辑 `public/` 下的文件，刷新浏览器就能看到，不需要构建。
+
+- 启动页是 `public/start.html`，样式和脚本都写在这一个文件里，双手素材图是 `public/images/hand-sheet.webp`。它会从 Google Fonts 加载 Inter 字体，从 Open-Meteo 获取台北天气，断网时这两项会退回系统字体和「Weather unavailable」。
+- 工作台是 `public/index.html`，页面用 `#/overview` 这类 hash 地址切换，路由和页面逻辑都在 `public/scripts/app.js`。
 
 `public/scripts/charts.js` 和 `public/styles/app.css` 来自 MIT 许可的界面套件，修改时保留文件开头的版权和许可说明。
 
@@ -54,7 +57,9 @@ npm run dev
 
 ```text
 public/
-  index.html             前端入口
+  start.html             启动页（/）
+  index.html             工作台（/desk）
+  images/                启动页双手素材图、工作台背景图
   styles/  scripts/      原型的样式和脚本（data.js 是示例数据）
   fonts/                 IBM Plex Sans、Source Serif 4、思源黑体/宋体（子集）、Geist Mono 及各自 OFL 许可
 app/api/
@@ -66,7 +71,7 @@ lib/
   mock-api.ts            样例数据
 scripts/seed.mjs         示例数据写入脚本
 tests/                   接口和数据库测试
-next.config.ts           把 / 改写到 public/index.html
+next.config.ts           把 / 改写到 start.html，/desk 改写到 index.html
 docs/
   API.md                 API 约定
   integrations.md        第三方集成方案（评审稿）
