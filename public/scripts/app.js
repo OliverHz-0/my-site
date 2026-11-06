@@ -751,15 +751,15 @@
   render();
 
   // ---------- font and figure checks (read in the console) ----------
-  Promise.all([document.fonts.load('400 12px "Geist Mono"'), document.fonts.load('700 30px "Geist"')]).then(() => document.fonts.ready).then(() => {
+  Promise.all([document.fonts.load('400 12px "Geist Mono"'), document.fonts.load('600 30px "IBM Plex Sans"'), document.fonts.load('400 14px "Noto Sans SC"', '研'), document.fonts.load('600 24px "Source Serif 4"'), document.fonts.load('600 24px "Noto Serif SC"', '研')]).then(() => document.fonts.ready).then(() => {
     placeIndicators(false); placeTabIndicators(false);
     const faces = [...document.fonts].filter((f) => f.status === 'loaded').map((f) => f.family.replace(/"/g, ''));
-    const probe = (style) => { const s = document.createElement('span'); s.style.cssText = `position:absolute;visibility:hidden;font:400 14px "Geist";${style}`; s.textContent = '1111'; document.body.appendChild(s); const a = s.getBoundingClientRect().width; s.textContent = '0000'; const b = s.getBoundingClientRect().width; s.remove(); return [a, b]; };
+    const probe = (style) => { const s = document.createElement('span'); s.style.cssText = `position:absolute;visibility:hidden;font:400 14px "IBM Plex Sans";${style}`; s.textContent = '1111'; document.body.appendChild(s); const a = s.getBoundingClientRect().width; s.textContent = '0000'; const b = s.getBoundingClientRect().width; s.remove(); return [a, b]; };
     const [p1, p0] = probe(''), [t1, t0] = probe('font-variant-numeric:tabular-nums');
     const report = {
-      geistLoaded: faces.includes('Geist'), monoLoaded: faces.includes('Geist Mono'),
-      check400: document.fonts.check('400 14px "Geist"'), check500: document.fonts.check('500 14px "Geist"'), check700: document.fonts.check('700 30px "Geist"'), checkMono: document.fonts.check('400 12px "Geist Mono"'),
-      tabularChangesWidths: Math.abs(p1 - p0) > 0.1 && Math.abs(t1 - t0) < 0.1, h1Count: $$('h1').length,
+      plexLoaded: faces.includes('IBM Plex Sans'), sansScLoaded: faces.includes('Noto Sans SC'), serifLoaded: faces.includes('Source Serif 4'), serifScLoaded: faces.includes('Noto Serif SC'), monoLoaded: faces.includes('Geist Mono'),
+      check400: document.fonts.check('400 14px "IBM Plex Sans"'), check600: document.fonts.check('600 14px "IBM Plex Sans"'), checkHeading: document.fonts.check('600 24px "Source Serif 4"'), checkMono: document.fonts.check('400 12px "Geist Mono"'),
+      tabularDigits: Math.abs(t1 - t0) < 0.1, proportionalDefault: Math.abs(p1 - p0) > 0.1,  // Plex's default digits are already tabular h1Count: $$('h1').length,
     };
     window.__fontReport = report;
     console.info('[研台] font check', report);

@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>研台 Lab Desk · 个人工作站</title>
   <meta name="description" content="研台 Lab Desk：把日常任务、项目和科研进展放在一处的个人工作站。页面内容为示例数据。">
-  <link rel="preload" href="fonts/Geist-Variable.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="fonts/IBMPlexSans-Latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/NotoSansSC-Subset.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/app.css">
   <link rel="stylesheet" href="styles/site.css">
 </head>
 <body>
   <div class="app">
-    <aside class="sidebar" id="sidebar" aria-label="主导航">
+    <aside class="sidebar glass" data-kind="light" id="sidebar" aria-label="主导航">
       <a class="brand" href="#/overview" aria-label="研台 Lab Desk 总览">
         <svg class="brand-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="2.5" y="2.5" width="27" height="27" rx="7"/>
@@ -48,5 +49,6 @@
   <script src="scripts/charts.js"></script>
   <script src="scripts/data.js"></script>
   <script src="scripts/app.js"></script>
+  <script type="module" src="scripts/glass.js"></script>
 </body>
 </html>

@@ -56,7 +56,7 @@ npm run dev
 public/
   index.html             前端入口
   styles/  scripts/      原型的样式和脚本（data.js 是示例数据）
-  fonts/                 Geist 字体及 OFL 许可
+  fonts/                 IBM Plex Sans、Source Serif 4、思源黑体/宋体（子集）、Geist Mono 及各自 OFL 许可
 app/api/
   health/                健康检查
   research/digests/      每日精选（SQLite）

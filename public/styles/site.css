@@ -11,6 +11,8 @@
    Main is 12 columns with a 16px gutter; span 4 + span 8 and span 6 + span 6 both end on the main's right edge. */
 
 body { font-family: var(--font); line-height: 20px; }
+/* headings in the serif; the serif sets its own spacing, so the sans headings' tightening is undone */
+h1, h2, h3, .brand-name { font-family: var(--font-display); letter-spacing: 0; }
 .mono { font-family: var(--font-mono); }
 .num { font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); }
@@ -349,7 +351,8 @@ td.r, th.r { text-align: right; }
   .ov-summary, .ov-weekly { grid-column: span 6; }
 }
 @media (max-width: 1100px) {
-  :root { --frame-gap: 12px; --frame-gap-y: 12px; --radius-frame: 28px; }
+  /* one even wash: iOS ignores background-attachment: fixed, so a wash shaped to the photo would drift off it */
+  :root { --frame-gap: 12px; --frame-gap-y: 12px; --radius-frame: 28px; --glass: rgba(250, 250, 250, 0.68); }
   .app { grid-template-columns: minmax(0, 1fr); padding: 0 20px 20px; }
   /* the top bar floats over the slab as its own frosted pill and stays at the top while scrolling */
   .mobile-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 56px; margin: 0 -8px 12px; padding: 0 6px; position: sticky; top: calc(var(--frame-gap-y) + 8px); z-index: 20; border-radius: var(--radius-pill); background: var(--glass-bar); -webkit-backdrop-filter: blur(20px) saturate(1.2); backdrop-filter: blur(20px) saturate(1.2); box-shadow: 0 0 0 1px var(--glass-edge) inset, 0 8px 24px -12px rgba(0, 0, 0, 0.25); }
@@ -412,27 +415,18 @@ td.r, th.r { text-align: right; }
   [data-block="research"] .lead-fig { order: 3; flex-basis: 100%; margin: -4px 0 4px; }
 }
 
-/* ---------- frame: light field and frosted slab ----------
-   The light field is grey silk-like light made from gradients alone: a slow conic sweep for the folds,
-   with soft white and grey pools over it, blurred so the bands read as cloth rather than geometry.
+/* ---------- frame: photo backdrop and frosted slab ----------
+   The backdrop is a photograph (images/backdrop.jpg: a snowy headland over a teal sea), fixed to the window
+   so the slab and the glass sidebar slide over it. --backdrop shows while it loads.
    Change the look here; the slab, sidebar and cards above do not depend on it. */
 body { background: var(--backdrop); }
 body::before {
   content: "";
   position: fixed;
-  inset: -12vmax;
+  inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(38% 30% at 22% 18%, rgba(255, 255, 255, 0.95), transparent 70%),
-    radial-gradient(30% 42% at 88% 12%, rgba(80, 80, 80, 0.7), transparent 72%),
-    radial-gradient(46% 26% at 64% 58%, rgba(255, 255, 255, 0.85), transparent 70%),
-    radial-gradient(34% 40% at 8% 78%, rgba(90, 90, 90, 0.65), transparent 72%),
-    radial-gradient(40% 30% at 86% 92%, rgba(255, 255, 255, 0.9), transparent 70%),
-    linear-gradient(118deg, transparent 38%, rgba(255, 255, 255, 0.7) 46%, transparent 54%),
-    linear-gradient(152deg, transparent 58%, rgba(70, 70, 70, 0.28) 66%, transparent 76%),
-    conic-gradient(from 200deg at 58% 46%, #e8e8e8, #b0b0b0 14%, #f4f4f4 30%, #c6c6c6 46%, #ededed 60%, #9c9c9c 76%, #e2e2e2 90%, #e8e8e8);
-  filter: blur(36px);
+  background: url("../images/backdrop.jpg") center / cover no-repeat;
 }
 
 /* the slab sits behind the sidebar and canvas. It is drawn on ::before because backdrop-filter on .app itself
@@ -445,10 +439,51 @@ body::before {
   z-index: -1;
   border-radius: var(--radius-frame);
   background: var(--glass);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(var(--glass-lift));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(var(--glass-lift));
   box-shadow: inset 0 0 0 1px var(--glass-edge), inset 0 1px 0 rgba(255, 255, 255, 0.9), var(--shadow-slab);
   pointer-events: none;
+}
+
+/* ---------- liquid glass: the sidebar ----------
+   Glasswork's light glass (https://github.com/kubai087/glasswork, glass.css): a thin white wash over the
+   scene, lightly blurred, its tone deepened and lifted, then the rim lens from scripts/glass.js (Chromium
+   only; var(--glass-lens,) is empty elsewhere). Only background, backdrop-filter, box-shadow and colour
+   change; the sidebar's layout, radius and nav are as above.
+   Over the backdrop photo the tint never drops below 30% (--floor), so --muted keeps 4.5:1 where the
+   sea under the glass is darkest. */
+.glass {
+  --density: 0.5;
+  --floor: 0.22;
+  --tint-a: min(0.95, max(var(--floor), calc(var(--gl-thin) + (var(--gl-dense) - var(--gl-thin)) * var(--density))));
+  --gl-filter: blur(var(--gl-blur)) saturate(var(--gl-sat)) brightness(var(--gl-bri));
+  color: var(--text);
+  background: color-mix(in srgb, var(--gl-tint) calc(var(--tint-a) * 100%), transparent);
+  -webkit-backdrop-filter: var(--gl-filter);
+  backdrop-filter: var(--gl-filter) var(--glass-lens,);
+  isolation: isolate;
+  /* plain round corners: WebKit on iOS leaves a backdrop filter clipped to a superellipse undrawn */
+  corner-shape: round;
+  /* light caught on the top-left rim and fainter bottom-right, a hairline, a soft shadow, and the bevel */
+  box-shadow:
+    inset 1.5px 1.5px 1px -1px rgb(255 255 255 / 1),
+    inset -1.5px -1.5px 1px -1px rgb(255 255 255 / 0.6),
+    inset 0 0 0 0.5px rgb(255 255 255 / 0.3),
+    0 0 0 0.5px rgb(0 0 0 / 0.12),
+    0 4px 16px rgb(0 0 0 / 0.1),
+    inset 0 6px 8px -6px rgb(255 255 255 / 0.5),
+    inset 4px 0 8px -6px rgb(255 255 255 / 0.22),
+    inset -4px 0 8px -6px rgb(255 255 255 / 0.12),
+    inset 0 -6px 8px -6px rgb(0 0 0 / 0.06);
+}
+/* on a phone the sidebar is a drawer over the cards (near-black ones included), so its tint rises
+   until --muted keeps 4.5:1 over black, and the blur widens so card text behind it doesn't read through */
+@media (max-width: 1100px) { .sidebar.glass { --floor: 0.88; --gl-blur: 10px; } }
+@media (prefers-reduced-transparency: reduce) {
+  .glass { background: var(--gl-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (forced-colors: active) {
+  .glass { border: 1px solid CanvasText; background: Canvas; backdrop-filter: none; }
 }
 
 /* status pills: no hue; "needs attention" is an outline, "done" is solid black */
