@@ -106,6 +106,20 @@ textarea.input { height: 96px; padding: 10px 12px; resize: vertical; }
 .nav-item .count { margin-left: auto; font-size: var(--fs-small); color: var(--muted); font-variant-numeric: tabular-nums; }
 .nav-item[aria-current="page"] .count { color: var(--inverse-muted); }
 .sidebar .group-label { margin: 10px 12px 2px; color: var(--muted); }
+/* 可折叠的分组：标题是按钮，点击展开或收起下面的链接 */
+.sidebar .group-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: calc(100% - 12px); min-height: 28px; margin: 6px 6px 0; padding: 0 6px;
+  border: 0; border-radius: 8px; background: transparent; font: inherit; font-size: var(--fs-small); text-align: left;
+  cursor: pointer; transition: background-color var(--t-hover) ease, color var(--t-hover) ease;
+}
+.sidebar .group-toggle:hover { background: var(--raised); color: var(--text); }
+.sidebar .group-toggle:focus-visible { outline: 2px solid var(--text); outline-offset: 1px; }
+.sidebar .group-toggle .fold-chev { width: 14px; height: 14px; flex: none; transition: transform var(--t-ui) var(--ease-out); }
+.sidebar .group-toggle[aria-expanded="false"] .fold-chev { transform: rotate(-90deg); }
+.nav-fold { display: grid; grid-template-rows: 1fr; transition: grid-template-rows var(--t-ui) var(--ease-out); }
+.nav-fold > .nav { min-height: 0; overflow: hidden; }
+.nav-fold.closed { grid-template-rows: 0fr; }
 .sidebar .bottom { margin-top: auto; padding-top: 4px; }
 .sidebar .sample-note { padding: 4px 12px 0; color: var(--muted); font-size: var(--fs-small); }
 .canvas { padding: 4px 4px 4px 0; min-height: 0; }
@@ -398,7 +412,7 @@ td.r, th.r { text-align: right; }
   .drawer { width: 100vw; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .nav-indicator, .tabs .tab-ind, .sidebar, .drawer, .scrim, .rings svg circle { transition: none !important; }
+  .nav-indicator, .tabs .tab-ind, .sidebar, .drawer, .scrim, .rings svg circle, .nav-fold, .sidebar .group-toggle .fold-chev { transition: none !important; }
 }
 
 /* 总览 row 3: a pipeline row takes the same pitch as a project row beside it, so both cards end on their last row */

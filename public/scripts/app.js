@@ -148,6 +148,37 @@
         return `<a class="nav-item" href="${href}"${cur ? ' aria-current="page"' : ''}>${ic(icon)}<span>${esc(label)}</span>${n ? `<span class="count" aria-label="今天截止 ${n} 项">${n}</span>` : ''}</a>`;
       }).join('');
     }
+    syncFold(route);
+  }
+
+  // ---------- 侧栏分组折叠 ----------
+  // 科研、生活、个人公司、集成四组可以折叠；展开状态存在 localStorage。
+  // 第一次打开时只展开当前页面所在的组；之后进入一个收起组里的页面，会自动展开那一组。
+  const FOLD_KEY = 'labdesk.navGroups';
+  const FOLDABLE = ['research', 'life', 'company', 'integrations'];
+  let fold = (() => { try { const v = JSON.parse(localStorage.getItem(FOLD_KEY)); return v && typeof v === 'object' ? v : null; } catch { return null; } })();
+  const saveFold = () => { try { localStorage.setItem(FOLD_KEY, JSON.stringify(fold)); } catch { /* 隐私模式等情况下存不了，只在本次打开内有效 */ } };
+  const groupOf = (route) => FOLDABLE.find((g) => NAV[g].some(([, href, , , noMatch]) => !noMatch && href === '#' + route)) || null;
+  function applyFold() {
+    for (const g of FOLDABLE) {
+      const open = !!fold[g], btn = $(`[data-action="nav-group"][data-group="${g}"]`), box = $('#nav-' + g);
+      if (!btn || !box) continue;
+      btn.setAttribute('aria-expanded', String(open));
+      box.classList.toggle('closed', !open);
+      box.inert = !open;   // 收起后里面的链接不能用 Tab 选中，读屏也跳过
+    }
+  }
+  let foldRoute = null;   // 只在切换到新页面时自动展开；同一页面重绘时，尊重用户刚才的收起
+  function syncFold(route) {
+    const cur = groupOf(route);
+    if (!fold) { fold = Object.fromEntries(FOLDABLE.map((g) => [g, g === cur])); saveFold(); }
+    else if (route !== foldRoute && cur && !fold[cur]) { fold[cur] = true; saveFold(); }
+    foldRoute = route;
+    applyFold();
+  }
+  function toggleFold(g) {
+    if (!FOLDABLE.includes(g)) return;
+    fold[g] = !fold[g]; saveFold(); applyFold();
   }
   const lastIndicator = {};
   function placeIndicators(animate) {
@@ -1098,6 +1129,7 @@
     const act = a.dataset.action, id = a.dataset.id, val = a.dataset.value;
     const H = {
       'open-nav': () => toggleNav(true),
+      'nav-group': () => toggleFold(a.dataset.group),
       retry: () => { S.failed.delete(id); if (S.blockState) S.blockState = null; rerender(); },
       reload: () => { if (S.blockState) S.blockState = null; refresh(...a.dataset.keys.split(',')); rerender(); },
       'task-area': () => { if (S.taskArea === val) return; S.taskArea = val; S.taskProject = ''; syncTaskUrl(); flip(() => rerender()); },

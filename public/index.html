@@ -21,14 +21,14 @@
         <span><span class="brand-name">研台 Lab Desk</span><br><span class="brand-scope">个人工作站</span></span>
       </a>
       <nav class="nav" data-nav-group="main"></nav>
-      <div class="group-label">科研</div>
-      <nav class="nav" data-nav-group="research" aria-label="科研"></nav>
-      <div class="group-label">生活</div>
-      <nav class="nav" data-nav-group="life" aria-label="生活"></nav>
-      <div class="group-label">个人公司</div>
-      <nav class="nav" data-nav-group="company" aria-label="个人公司"></nav>
-      <div class="group-label">集成</div>
-      <nav class="nav" data-nav-group="integrations" aria-label="集成"></nav>
+      <button class="group-label group-toggle" type="button" data-action="nav-group" data-group="research" aria-expanded="true" aria-controls="nav-research"><span>科研</span><svg class="fold-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="nav-fold" id="nav-research"><nav class="nav" data-nav-group="research" aria-label="科研"></nav></div>
+      <button class="group-label group-toggle" type="button" data-action="nav-group" data-group="life" aria-expanded="true" aria-controls="nav-life"><span>生活</span><svg class="fold-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="nav-fold" id="nav-life"><nav class="nav" data-nav-group="life" aria-label="生活"></nav></div>
+      <button class="group-label group-toggle" type="button" data-action="nav-group" data-group="company" aria-expanded="true" aria-controls="nav-company"><span>个人公司</span><svg class="fold-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="nav-fold" id="nav-company"><nav class="nav" data-nav-group="company" aria-label="个人公司"></nav></div>
+      <button class="group-label group-toggle" type="button" data-action="nav-group" data-group="integrations" aria-expanded="true" aria-controls="nav-integrations"><span>集成</span><svg class="fold-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="nav-fold" id="nav-integrations"><nav class="nav" data-nav-group="integrations" aria-label="集成"></nav></div>
       <div class="bottom">
         <nav class="nav" data-nav-group="bottom" aria-label="设置"></nav>
         <p class="sample-note">标有「示例」的为演示数据</p>
