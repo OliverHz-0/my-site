@@ -5,7 +5,7 @@ import { useState, type FormEvent } from "react";
 // 只跳转到站内路径，防止 ?next= 被用来跳到外部网站。
 function safeNext(): string {
   const next = new URLSearchParams(window.location.search).get("next");
-  return next && /^\/(?![/\\])/.test(next) ? next : "/research/digest";
+  return next && /^\/(?![/\\])/.test(next) ? next : "/dashboard";
 }
 
 export default function LoginPage() {

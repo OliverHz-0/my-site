@@ -25,7 +25,7 @@ export default function HomePage() {
         ))}
       </ul>
       <p>
-        <Link href="/research/digest">进入工作区</Link>
+        <Link href="/dashboard">进入工作区</Link>
       </p>
     </main>
   );
