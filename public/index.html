@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>研台 Lab Desk · 个人工作站</title>
-  <meta name="description" content="研台 Lab Desk：把日常任务、项目和科研进展放在一处的个人工作站。页面内容为示例数据。">
+  <meta name="description" content="研台 Lab Desk：把日常任务、项目和科研进展放在一处的个人工作站。任务、生活和公司记录是真实数据，标有「示例」的部分为演示内容。">
   <link rel="preload" href="fonts/IBMPlexSans-Latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/NotoSansSC-Subset.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/app.css">
@@ -23,11 +23,15 @@
       <nav class="nav" data-nav-group="main"></nav>
       <div class="group-label">科研</div>
       <nav class="nav" data-nav-group="research" aria-label="科研"></nav>
+      <div class="group-label">生活</div>
+      <nav class="nav" data-nav-group="life" aria-label="生活"></nav>
+      <div class="group-label">个人公司</div>
+      <nav class="nav" data-nav-group="company" aria-label="个人公司"></nav>
       <div class="group-label">集成</div>
       <nav class="nav" data-nav-group="integrations" aria-label="集成"></nav>
       <div class="bottom">
         <nav class="nav" data-nav-group="bottom" aria-label="设置"></nav>
-        <p class="sample-note">示例数据</p>
+        <p class="sample-note">标有「示例」的为演示数据</p>
       </div>
     </aside>
     <div class="scrim" id="scrim"></div>
@@ -48,6 +52,7 @@
   <div id="layers"></div>
   <script src="scripts/charts.js"></script>
   <script src="scripts/data.js"></script>
+  <script src="scripts/api.js"></script>
   <script src="scripts/app.js"></script>
   <script type="module" src="scripts/glass.js"></script>
 </body>

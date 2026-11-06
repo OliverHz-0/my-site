@@ -496,3 +496,111 @@ body::before {
   .app::before { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
   .mobile-bar { background: var(--glass-bar-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
+
+/* ---------- real records: tasks, 生活, 个人公司 ----------
+   Built from the same tokens and components as the screens above; nothing here changes the shell. */
+
+/* a card still on sample data says so next to its title */
+.sample-tag { display: inline-grid; place-items: center; height: 22px; padding: 0 8px; border-radius: var(--radius-pill); box-shadow: inset 0 0 0 1px var(--control); color: var(--muted); font-family: var(--font); font-size: var(--fs-small); font-weight: 500; letter-spacing: 0; white-space: nowrap; }
+.inverse .sample-tag { box-shadow: inset 0 0 0 1px #4a4a4a; color: var(--inverse-muted); }
+.boot { padding: 48px 8px; color: var(--muted); }
+
+/* 我的任务: area filter above the state tabs; one row per task */
+.filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: -4px 0 4px; }
+.filter-row .segmented { max-width: 100%; }
+.task-line { grid-template-columns: 32px minmax(0, 1fr) auto 44px; }
+.task .top .task-area { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.task .top .task-area .small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tlink.danger, .tlink.danger:hover { color: var(--negative); }
+
+/* history rows: date, value, then 更正 / 删除 */
+.hist { grid-template-columns: 96px minmax(0, 1fr) auto; }
+.row-actions { display: inline-flex; gap: 12px; }
+.row-actions .tlink { font-size: var(--fs-small); }
+
+/* an entry row inside a card: fields side by side, the button on their baseline */
+.entry { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; margin-bottom: 16px; }
+.entry .field { flex: 1 1 96px; gap: 6px; min-width: 0; }
+.entry .field label { font-size: var(--fs-small); color: var(--muted); font-weight: 500; }
+.entry .btn { flex: none; }
+.week-note { margin-top: 6px; }
+.week-note b { color: var(--text); font-weight: 600; }
+.fields2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.hint { display: block; margin-top: 4px; color: var(--muted); font-size: var(--fs-small); }
+input[readonly] { background: var(--raised); }
+[hidden] { display: none !important; }
+
+/* 训练计划 (near-black card): last and next, big */
+.plan-figs { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 20px; align-items: center; margin: 4px 0 20px; }
+.plan-fig { display: grid; gap: 2px; min-width: 0; }
+.plan-fig .v { font-size: var(--fs-hero); line-height: 56px; font-weight: 500; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.plan-fig .l { font-size: var(--fs-small); color: var(--inverse-muted); }
+.plan-fig .reason { display: inline-block; padding: 1px 8px; border-radius: var(--radius-pill); background: var(--surface); color: var(--text); font-weight: 500; }
+.plan-actions { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 -4px 8px; }
+.inverse .btn { background-color: var(--inverse-raised); color: var(--primary-ink); box-shadow: none; }
+.inverse .btn:hover { background-color: #333; }
+.inverse .btn.primary.light { background-color: var(--surface); color: var(--text); }
+.inverse .btn.primary.light:hover { background-color: var(--raised); }
+.btn[aria-busy="true"] { opacity: 0.6; cursor: progress; }
+
+/* 部位循环 */
+.cycle-list { display: grid; margin: 0; padding: 0; list-style: none; }
+.cycle-list li { display: flex; align-items: center; gap: 12px; min-height: var(--hit); border-top: 1px solid var(--rule); }
+.cycle-list li:first-child { border-top: 0; }
+.cycle-list .idx { width: 24px; color: var(--muted); font-size: var(--fs-small); }
+.cycle-list .grow { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.cycle-list li.next .grow { font-weight: 600; }
+.cycle-list.editing { margin-bottom: 12px; }
+.actions-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+.actions-row .small { margin-right: auto; }
+
+/* 财务报表 */
+.month-switch { display: flex; align-items: center; gap: 2px; white-space: nowrap; }
+.money-figs { display: grid; gap: 14px; margin: 4px 0 16px; }
+.mf { display: grid; gap: 2px; }
+.mf .l { font-size: var(--fs-small); color: var(--inverse-muted); }
+.mf .v { font-size: var(--fs-title); line-height: 30px; font-weight: 500; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.mf.total { padding-top: 14px; border-top: 1px solid #333; }
+.mf.total .v { font-size: var(--fs-kpi); line-height: 40px; }
+.inverse .mf .v.neg { color: #ff9b8f; }
+.tx { grid-template-columns: 56px minmax(0, 1fr) auto auto; }
+.amt.income { font-weight: 600; }
+.sub-h { margin: 4px 0 2px; font-size: var(--fs-small); font-weight: 500; color: var(--muted); }
+.sub-h ~ .sub-h { margin-top: 16px; }
+
+/* 选品观察: one card per lead */
+.lead-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: var(--gap); margin-top: 12px; }
+.lead { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px 12px; border-radius: var(--radius-tile); background: var(--raised); min-width: 0; }
+.lead header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.lead h3 { font-size: var(--fs-section); line-height: 22px; font-weight: 600; overflow-wrap: anywhere; }
+.lead-src { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: -6px 0 0; }
+.lead-src .src { gap: 6px; margin-block: -12px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lead-src .src svg { width: 14px; height: 14px; flex: none; }
+.signals { display: flex; flex-wrap: wrap; gap: 6px; }
+.signal { display: inline-flex; align-items: baseline; gap: 4px; max-width: 100%; padding: 3px 10px; border-radius: var(--radius-pill); background: var(--surface); font-size: var(--fs-small); overflow-wrap: anywhere; }
+.signal b { font-weight: 500; color: var(--muted); }
+.signal.lv-high { background: var(--primary); color: var(--primary-ink); }
+.signal.lv-high b, .signal.lv-high .muted { color: var(--inverse-muted); }
+.signal.lv-medium { box-shadow: inset 0 0 0 1px var(--text); }
+.lead-kv { grid-template-columns: 56px minmax(0, 1fr); gap: 4px 10px; }
+.lead-kv dd { margin: 0; overflow-wrap: anywhere; }
+.lead footer { display: flex; flex-wrap: wrap; align-items: center; gap: 0 4px; margin: 2px -4px 0; }
+.lead footer .grow { flex: 1; }
+.signal-field .pair { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px; }
+
+/* 公司项目 rows pick the filter */
+.lrow.click[aria-pressed="true"] { background: var(--raised); }
+
+@media (max-width: 640px) {
+  .hist { grid-template-columns: 92px minmax(0, 1fr); }
+  .hist > span:first-child { white-space: nowrap; }
+  .hist .row-actions { grid-column: 1 / -1; margin-top: -6px; }
+  .tx { grid-template-columns: 48px minmax(0, 1fr) auto; }
+  .tx .row-actions { grid-column: 2 / -1; margin-top: -6px; }
+  .plan-figs { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .plan-figs .vrule { display: none; }
+  .fields2 { grid-template-columns: minmax(0, 1fr); }
+  .filter-row .segmented { display: flex; width: 100%; }
+  .filter-row .segmented button { flex: 1; padding: 0 4px; }
+  .filter-row .select { width: 100%; }
+}
