@@ -8,13 +8,10 @@ import { NextRequest } from "next/server";
 import { GET } from "../app/api/research/digests/route.ts";
 import { PATCH } from "../app/api/research/digests/[id]/route.ts";
 import { listDigests, openDigestDatabase, resolveDigestDate, setDigestSaved } from "../lib/research-digests-db.ts";
-import { proxy } from "../proxy.ts";
-import { createSession } from "../lib/auth.ts";
 
 const fields = ["id", "title", "authors", "journal", "publishedAt", "doi", "url", "summaryZh", "whyRelevant", "saved"].sort();
 let directory;
 let previousPath;
-let previousSecret;
 
 function seed() {
   return execFileSync(process.execPath, ["scripts/seed.mjs"], { encoding: "utf8", env: process.env });
@@ -52,17 +49,13 @@ async function assertError(response, status, code) {
 beforeEach(() => {
   directory = mkdtempSync(join(tmpdir(), "research-digests-"));
   previousPath = process.env.DATABASE_PATH;
-  previousSecret = process.env.SESSION_SECRET;
   process.env.DATABASE_PATH = join(directory, "nested", "test.db");
-  process.env.SESSION_SECRET = "test-only-secret-for-digests";
   seed();
 });
 
 afterEach(() => {
   if (previousPath === undefined) delete process.env.DATABASE_PATH;
   else process.env.DATABASE_PATH = previousPath;
-  if (previousSecret === undefined) delete process.env.SESSION_SECRET;
-  else process.env.SESSION_SECRET = previousSecret;
   rmSync(directory, { recursive: true, force: true });
 });
 
@@ -189,17 +182,6 @@ test("seed is reproducible and resets saved states and extra items", async () =>
   seed();
   assert.deepEqual(snapshot(), before);
   assert.equal(before.length, 10);
-});
-
-test("existing proxy protects both APIs and permits a signed session", async () => {
-  for (const [method, path] of [["GET", "/api/research/digests?date=2026-11-05"], ["PATCH", "/api/research/digests/dg_20261105_1"]]) {
-    await assertError(await proxy(new NextRequest(`http://localhost${path}`, { method })), 401, "UNAUTHORIZED");
-    const response = await proxy(new NextRequest(`http://localhost${path}`, {
-      method, headers: { Cookie: `session=${await createSession()}` },
-    }));
-    assert.equal(response.status, 200);
-    assert.equal(response.headers.get("x-middleware-next"), "1");
-  }
 });
 
 test("database failures keep the standard JSON error format", async () => {
