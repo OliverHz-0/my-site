@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { Icon } from "../(private)/icons";
 
 // 只跳转到站内路径，防止 ?next= 被用来跳到外部网站。
 function safeNext(): string {
@@ -36,21 +37,29 @@ export default function LoginPage() {
   }
 
   return (
-    <main>
-      <h1>登录工作区</h1>
-      <form className="login" onSubmit={submit}>
-        <label htmlFor="password">密码</label>
-        <input
-          id="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {error && <p className="error" role="alert">{error}</p>}
-        <button type="submit" disabled={pending}>{pending ? "登录中…" : "登录"}</button>
-      </form>
-    </main>
+    <div className="ground login-page">
+      <main className="panel login-card">
+        <span className="zone-icon" aria-hidden="true">
+          <Icon name="lock" />
+        </span>
+        <h1>登录工作区</h1>
+        <form className="login-form" onSubmit={submit}>
+          <label htmlFor="password">密码</label>
+          <input
+            id="password"
+            className="field"
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {error && <p className="error" role="alert">{error}</p>}
+          <button type="submit" className="btn btn--primary" disabled={pending}>
+            {pending ? "登录中…" : "登录"}
+          </button>
+        </form>
+      </main>
+    </div>
   );
 }

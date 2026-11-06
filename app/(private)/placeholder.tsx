@@ -12,7 +12,7 @@ export function Placeholder({ title, description, endpoint }: { title: string; d
       {error ? (
         <p className="error">{error}</p>
       ) : (
-        <p className="muted">
+        <p className="tile placeholder-status">
           <code>GET {endpoint}</code>：{data ? `返回 ${data.items.length} 条样例数据` : "加载中…"}
         </p>
       )}

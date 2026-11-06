@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { ApiError, apiRequest, useApi } from "@/lib/use-api";
 import { addDays, formatDay, formatWeekday, isValidDate, shanghaiToday } from "./dates";
 import { DigestItem, type DigestItemData } from "./digest-item";
 import { DigestSkeleton } from "./digest-skeleton";
+import { Icon } from "../../icons";
 
 type DigestResponse = { date: string; items: DigestItemData[] };
 
@@ -31,6 +33,8 @@ export function DigestView() {
   const inFlightSaves = useRef(new Set<string>());
   const [notice, setNotice] = useState<string | null>(null);
   const [saveUnauthorized, setSaveUnauthorized] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => setPortalReady(true), []);
 
   const today = shanghaiToday();
   const date = api.data?.date ?? urlDate ?? today;
@@ -92,7 +96,7 @@ export function DigestView() {
       <StateMessage title="登录已失效" role="alert">
         <p>正在前往登录页，登录后会回到这里。</p>
         <div className="digest-state-actions">
-          <Link className="digest-action" href={loginHref} replace>
+          <Link className="btn btn--primary digest-action" href={loginHref} replace>
             前往登录
           </Link>
         </div>
@@ -119,7 +123,7 @@ export function DigestView() {
         <StateMessage title="这个日期无法识别" role="alert">
           <p>地址里的日期需要写成 YYYY-MM-DD，例如 {today}。</p>
           <div className="digest-state-actions">
-            <Link className="digest-action" href={pathname}>
+            <Link className="btn btn--primary digest-action" href={pathname}>
               回到今天
             </Link>
           </div>
@@ -130,7 +134,8 @@ export function DigestView() {
         <StateMessage title="精选没有加载出来" role="alert">
           <p>{api.failure.message}</p>
           <div className="digest-state-actions">
-            <button type="button" className="digest-action" onClick={api.reload}>
+            <button type="button" className="btn btn--primary digest-action" onClick={api.reload}>
+              <Icon name="retry" />
               重试
             </button>
           </div>
@@ -141,11 +146,11 @@ export function DigestView() {
         <StateMessage title={api.data.date === today ? "今天还没有推送" : "这一天没有推送"}>
           <p>{formatDay(api.data.date)}没有精选文章，可以看看其他日期。</p>
           <div className="digest-state-actions">
-            <Link className="digest-action" href={digestHref(pathname, addDays(api.data.date, -1))}>
+            <Link className="btn btn--primary digest-action" href={digestHref(pathname, addDays(api.data.date, -1))}>
               看前一天
             </Link>
             {api.data.date !== today && (
-              <Link className="digest-action" href={pathname}>
+              <Link className="btn btn--secondary digest-action" href={pathname}>
                 回到今天
               </Link>
             )}
@@ -167,16 +172,21 @@ export function DigestView() {
         </ul>
       )}
 
-      <div className="digest-notice-region" aria-live="assertive">
-        {notice && (
-          <div className="digest-notice">
-            <p>{notice}</p>
-            <button type="button" onClick={() => setNotice(null)}>
-              关闭提示
-            </button>
-          </div>
+      {/* 玻璃面板的 backdrop-filter 会让 fixed 子元素相对面板定位，所以提示条挂到 body 上。 */}
+      {portalReady &&
+        createPortal(
+          <div className="digest-notice-region" aria-live="assertive">
+            {notice && (
+              <div className="digest-notice">
+                <p>{notice}</p>
+                <button type="button" aria-label="关闭提示" title="关闭提示" onClick={() => setNotice(null)}>
+                  <Icon name="close" />
+                </button>
+              </div>
+            )}
+          </div>,
+          document.body,
         )}
-      </div>
     </>
   );
 }
@@ -187,10 +197,8 @@ function DateNav({ pathname, date, today }: { pathname: string; date: string; to
 
   return (
     <nav className="digest-datenav" aria-label="切换日期">
-      <Link className="digest-daylink" href={digestHref(pathname, addDays(date, -1))}>
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M10 3 5 8l5 5" />
-        </svg>
+      <Link className="btn btn--secondary digest-daylink" href={digestHref(pathname, addDays(date, -1))}>
+        <Icon name="prev" />
         前一天
       </Link>
       <div className="digest-current">
@@ -209,7 +217,7 @@ function DateNav({ pathname, date, today }: { pathname: string; date: string; to
       </div>
       {/* 走到今天后，按钮原地变为不可用但仍可聚焦，键盘焦点不会丢失。 */}
       <Link
-        className="digest-daylink"
+        className="btn btn--secondary digest-daylink"
         href={digestHref(pathname, nextIsFuture ? date : next)}
         aria-disabled={nextIsFuture}
         title={nextIsFuture ? "还没有更新的精选" : undefined}
@@ -218,9 +226,7 @@ function DateNav({ pathname, date, today }: { pathname: string; date: string; to
         }}
       >
         后一天
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="m6 3 5 5-5 5" />
-        </svg>
+        <Icon name="next" />
       </Link>
     </nav>
   );
