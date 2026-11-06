@@ -1,4 +1,4 @@
-// 研台 Lab Desk: routing, views, layers and state. Renders only the active view, so the document holds one h1.
+// Hzzz_0's workbench: routing, views, layers and state. Renders only the active view, so the document holds one h1.
 // Screen question (总览): what should I push forward today, and is research keeping pace with everything else?
 // Face: the blue-grey ledger ground, research drawn in the one data hue. Signature: the research pipeline strip.
 (() => {
@@ -239,7 +239,7 @@
     calendar: '示例数据：日历里的安排为演示内容。',
     stats: '示例数据：工时与完成任务的统计为演示内容。',
     docs: '示例数据：文件列表为演示内容，上传尚未开放。',
-    settings: '示例数据：称呼和月度计划只保存在当前页面，刷新后恢复。',
+    settings: '示例数据：月度计划只保存在当前页面，刷新后恢复。',
   };
   const seg = (action, value, options, label) => `<div class="segmented" role="group" aria-label="${esc(label)}">${options.map(([v, l, icon]) => `<button type="button" data-action="${action}" data-value="${v}" aria-pressed="${v === value}"${icon ? ` aria-label="${esc(l)}"` : ''}>${icon ? ic(icon) : esc(l)}</button>`).join('')}</div>`;
   const tabs = (action, value, options, label) => `<div class="tabs" role="tablist" aria-label="${esc(label)}">${options.map(([v, l, n]) => `<button type="button" role="tab" data-action="${action}" data-value="${esc(v)}" aria-selected="${v === value}">${esc(l)}${n != null ? `<span class="n">${n}</span>` : ''}</button>`).join('')}<span class="tab-ind" aria-hidden="true"></span></div>`;
@@ -274,7 +274,7 @@
 
   // ---------- 总览 ----------
   VIEWS['/overview'] = {
-    title: '你好，林',
+    title: `你好，${D.owner.name}`,
     keys: () => ['tasks'],
     render() {
       const dr = D.draft(), days = D.daysLeft(dr.due), t = today();
@@ -607,9 +607,6 @@
     title: '设置',
     render() {
       return topRow('设置', `月度计划 工作 ${D.plan.work} h，科研 ${D.plan.research} h，个人 ${D.plan.personal} h。`, NOTE.settings) + `<div class="settings">
-        <div class="set-sec"><div><h2>个人资料</h2><p>问候语和头像使用这里的称呼。</p></div>
-          <form class="set-panel" data-form="profile"><div class="field"><label for="f-name">称呼</label><input class="input" id="f-name" name="name" value="${esc(D.owner.name)}" maxlength="8" required></div>
-          <div class="actions"><span class="small muted" data-saved></span><button class="btn primary" type="submit">保存</button></div></form></div>
         <div class="set-sec"><div><h2>月度计划</h2><p>本月进度的三个环按这里的小时数计算。当前：工作 ${pct(D.month().work, D.plan.work)}%，科研 ${pct(D.month().research, D.plan.research)}%，个人 ${pct(D.month().personal, D.plan.personal)}%。</p></div>
           <form class="set-panel" data-form="plan"><div class="fields3">${[['work', '工作'], ['research', '科研'], ['personal', '个人']].map(([k, l]) => `<div class="field"><label for="f-${k}">${l}（h）</label><input class="input num" id="f-${k}" name="${k}" type="number" inputmode="numeric" min="1" max="400" value="${D.plan[k]}" required></div>`).join('')}</div>
           <div class="actions"><span class="small muted" data-saved></span><button class="btn primary" type="submit">保存</button></div></form></div>
@@ -850,7 +847,7 @@
     for (const [idv, v] of kept) { const el = document.getElementById(idv); if (el && view.contains(el)) el.value = v; }
     if (focusId && path === lastPath) document.getElementById(focusId)?.focus({ preventScroll: true });
     lastHash = location.hash;
-    document.title = `${V.title} · 研台 Lab Desk`;
+    document.title = `${V.title} · Hzzz_0’s workbench`;
     renderNav();
     placeIndicators(opts.navChange);
     placeTabIndicators(opts.tabAnim);
@@ -1176,9 +1173,9 @@
       'paper-next': () => { const p = D.papers.find((x) => x.id === id); p.status = p.status === '待读' ? '在读' : '已批注'; if (p.status === '在读') Object.assign(p, { page: 1, pages: 12 }); if (p.status === '已批注') p.notes = 0; flip(() => rerender()); },
       'exp-open': () => expDrawer(a, id),
       'menu-summary': () => { const el = popover(a, `<button class="mi" role="menuitem" type="button" data-pop="export">导出概况 ${ic('download')}</button><button class="mi" role="menuitem" type="button" data-pop="all">查看全部项目 ${ic('chevr')}</button>`, { label: '总体概况' });
-        el.addEventListener('click', (e) => { const k = e.target.closest('[data-pop]')?.dataset.pop; if (k === 'export') { closeTop(); const pc = D.projectCounts(); download('研台_总体概况.csv', `指标,数值\n已完成任务（累计）,${tasksAll().filter((t) => t.state === '已完成').length}\n项目,${pc.total}\n进行中,${pc.active}\n已完成,${pc.done}\n暂停,${pc.paused}\n`); } if (k === 'all') { closeLayers(); location.hash = '#/tasks?view=projects'; } }); },
+        el.addEventListener('click', (e) => { const k = e.target.closest('[data-pop]')?.dataset.pop; if (k === 'export') { closeTop(); const pc = D.projectCounts(); download('workbench_总体概况.csv', `指标,数值\n已完成任务（累计）,${tasksAll().filter((t) => t.state === '已完成').length}\n项目,${pc.total}\n进行中,${pc.active}\n已完成,${pc.done}\n暂停,${pc.paused}\n`); } if (k === 'all') { closeLayers(); location.hash = '#/tasks?view=projects'; } }); },
       'share-month': () => { const m = D.month(); const txt = `11月1日至6日：工作 ${m.work}/${D.plan.work} h，科研 ${m.research}/${D.plan.research} h，个人 ${m.personal}/${D.plan.personal} h（示例数据）`; (navigator.clipboard?.writeText(txt) || Promise.reject()).then(() => toast('已复制本月摘要'), () => toast(txt)); },
-      'download-month': () => { const m = D.month(); download('研台_11月报告.csv', `类别,已用小时,计划小时,完成度\n工作,${m.work},${D.plan.work},${pct(m.work, D.plan.work)}%\n科研,${m.research},${D.plan.research},${pct(m.research, D.plan.research)}%\n个人,${m.personal},${D.plan.personal},${pct(m.personal, D.plan.personal)}%\n`); toast('已下载 11月报告'); },
+      'download-month': () => { const m = D.month(); download('workbench_11月报告.csv', `类别,已用小时,计划小时,完成度\n工作,${m.work},${D.plan.work},${pct(m.work, D.plan.work)}%\n科研,${m.research},${D.plan.research},${pct(m.research, D.plan.research)}%\n个人,${m.personal},${D.plan.personal},${pct(m.personal, D.plan.personal)}%\n`); toast('已下载 11月报告'); },
       create: () => { const el = popover(a, [['task', '任务', 'tasks'], ['weight', '体重', 'scale'], ['sleep', '睡眠', 'moon'], ['training', '训练', 'dumbbell'], ['transaction', '收支', 'wallet'], ['lead', '选品线索', 'eye'], ['project', '项目（示例）', 'overview'], ['note', '笔记（示例）', 'doc'], ['paper', '文献（示例）', 'book'], ['experiment', '实验记录（示例）', 'flask']].map(([k, l, i]) => `<button class="mi" role="menuitem" type="button" data-pop="${k}"><span style="display:flex;gap:10px;align-items:center">${ic(i)}${l}</span></button>`).join(''), { label: '新建' });
         el.addEventListener('click', (e) => { const k = e.target.closest('[data-pop]')?.dataset.pop; if (k) { closeTop(); openForm(k, a); } }); },
       new: () => openForm(a.dataset.type, a),
@@ -1217,7 +1214,6 @@
     const f = ev.target.closest('[data-form]'); if (!f) return;
     ev.preventDefault();
     const fd = Object.fromEntries(new FormData(f));
-    if (f.dataset.form === 'profile') { if (!fd.name.trim()) return; D.owner.name = fd.name.trim(); D.owner.initial = fd.name.trim().slice(0, 1); VIEWS['/overview'].title = `你好，${D.owner.name}`; }
     if (f.dataset.form === 'plan') { for (const k of ['work', 'research', 'personal']) { const v = Math.round(+fd[k]); if (!(v > 0)) return; D.plan[k] = v; } }
     rerender();
     const stamp = $(`[data-form="${f.dataset.form}"] [data-saved]`); if (stamp) stamp.textContent = '已保存';
@@ -1354,6 +1350,6 @@
       tabularDigits: Math.abs(t1 - t0) < 0.1, proportionalDefault: Math.abs(p1 - p0) > 0.1,  // Plex's default digits are already tabular h1Count: $$('h1').length,
     };
     window.__fontReport = report;
-    console.info('[研台] font check', report);
+    console.info('[workbench] font check', report);
   });
 })();

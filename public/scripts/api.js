@@ -1,4 +1,4 @@
-// 研台 Lab Desk: the one place that talks to /api. Requests, errors and field mapping live here; app.js only sees
+// Hzzz_0's workbench: the one place that talks to /api. Requests, errors and field mapping live here; app.js only sees
 // plain objects and Chinese labels. Contract: docs/API.md (任务与项目, 生活区, 个人公司区).
 (() => {
   // ---------- dates: "today" is always Asia/Shanghai ----------

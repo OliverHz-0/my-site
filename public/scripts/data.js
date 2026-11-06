@@ -1,4 +1,4 @@
-// 研台 Lab Desk sample dataset: the cards that are not on real records yet are computed from these rows.
+// Hzzz_0's workbench sample dataset: the cards that are not on real records yet are computed from these rows.
 // All names, papers, experiments, dates and hours are illustrative sample data (示例数据).
 // Tasks are not here: they are real records loaded through scripts/api.js (GET /api/tasks).
 (() => {
@@ -8,7 +8,7 @@
   const DAY = 86400000;
   const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / DAY);
 
-  const owner = { name: '林', initial: '林', hue: 214 };
+  const owner = { name: 'Hzzz_0', initial: 'H', hue: 214 };
 
   const STAGES = ['阅读', '实验', '写作', '投稿'];
 
