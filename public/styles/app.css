@@ -9,51 +9,89 @@
 @font-face { font-family: "Geist"; src: url("../fonts/Geist-Variable.ttf") format("truetype"); font-weight: 100 900; font-style: normal; font-display: swap; }
 @font-face { font-family: "Geist Mono"; src: url("../fonts/GeistMono-Variable.ttf") format("truetype"); font-weight: 100 900; font-style: normal; font-display: swap; }
 :root {
-  /* Achromatic ledger (app sheet) mapped onto the user reference (brand.json).
-     Face: the blue-grey ledger ground, with research drawn in --chart-3, the one data hue. */
-  --ground: #f2f4f7;
-  --surface: #ffffff;
-  --raised: #eeeeee;
-  --active: #141414;           /* the active nav pill is near-black, as in the user reference */
-  --border: #e6e6e6;
-  --rule: #f0f0f0;
-  --control: #d4d4d4;
+  /* Monochrome workstation: one frosted slab floating on a soft grey light field, white and near-black
+     cards alternating on it. Black, white and grey only; red is kept for overdue and errors alone.
+     Every colour, size and radius in site.css reads one of these tokens. */
+
+  /* backdrop and frosted slab */
+  --backdrop: #d6d6d6;                      /* flat fallback under the generated light field */
+  --glass: rgba(250, 250, 250, 0.5);        /* the slab: translucent white over the light field */
+  --glass-solid: #ececec;                   /* the slab when the user asks for less transparency */
+  --glass-edge: rgba(255, 255, 255, 0.7);   /* the slab's 1px rim */
+  --glass-blur: 28px;
+  --glass-bar: rgba(255, 255, 255, 0.72);   /* the phone top bar, floating over the slab */
+  --glass-bar-solid: #f7f7f7;
+
+  /* grounds */
+  --ground: #ececec;           /* behind content where no glass is drawn */
+  --surface: #ffffff;          /* white cards */
+  --raised: #f0f0f0;           /* hover fills, quiet tiles inside white cards */
+  --active: #141414;           /* the active nav pill */
+  --border: #e4e4e4;
+  --rule: #ededed;
+  --control: #cfcfcf;
+
+  /* ink */
   --text: #0a0a0a;
-  --muted: #6b6b6b;
-  --faint: #6b6b6b;
+  --muted: #5c5c5c;            /* 6.6:1 on white, 4.9:1 on the slab at its darkest */
+  --faint: #5c5c5c;
   --accent: #141414;
   --primary: #141414;
-  --primary-hover: #2a2a2a;
+  --primary-hover: #2e2e2e;
   --primary-ink: #ffffff;
-  --inverse-muted: #a3a3a3;    /* secondary text on the near-black cards, 7.4:1 */
+  --inverse: #141414;          /* near-black cards */
+  --inverse-muted: #a6a6a6;    /* secondary text on the near-black cards, 7.6:1 */
   --inverse-raised: #262626;   /* nested tiles inside the near-black cards */
-  --positive: #2e7d32; --negative: #c4242a; --warning: #92400e;
-  --pill-positive-bg: #dcfae5; --pill-positive-ink: #04250e;
-  --pill-negative-bg: #ffedea; --pill-negative-ink: #831c1e;
-  --pill-warning-bg: #fffbeb; --pill-warning-ink: #92400e;
-  --pill-neutral-bg: #eeeeee; --pill-neutral-ink: #3d3d3d;
-  --chart-1: #141414; --chart-2: #8a8a8a; --chart-3: #1d5fbf; --chart-muted: #d4d4d4;
+
+  /* status: no hue except --negative */
+  --positive: var(--text); --negative: #b42318; --warning: var(--text);
+  --pill-positive-bg: #141414; --pill-positive-ink: #ffffff;     /* done: solid black */
+  --pill-negative-bg: #fdecea; --pill-negative-ink: #8a1c12;     /* overdue: the one red */
+  --pill-warning-bg: #ffffff;  --pill-warning-ink: #141414;      /* needs attention: outlined (see site.css) */
+  --pill-neutral-bg: #ededed;  --pill-neutral-ink: #3d3d3d;
+
+  /* charts: separated by lightness. Two lines: ink and mid grey. Three rings: ink, mid grey, dark grey,
+     so neighbouring rings always differ by more than 2:1. Every series is at least 3:1 on white. */
+  --chart-1: #141414;          /* 工作 */
+  --chart-2: #4f4f4f;          /* 个人 */
+  --chart-3: #8f8f8f;          /* 科研, 3.2:1 on white */
+  --chart-muted: #d4d4d4;
   --chart-mark: var(--text);
   --chart-span: 0.06;
   --grid: #e6e6e6;
   --axis-ink: var(--muted);
   --ink: var(--text);
   --scrim: rgba(10, 10, 10, 0.4);
-  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --tint-owner: #e3ecf8; --tint-coauthor: #f8ecdc;   /* pale identity tints, hues 214 and 34 */
+
+  /* depth */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 14px 32px -18px rgba(0, 0, 0, 0.18);
+  --shadow-slab: 0 30px 80px -40px rgba(0, 0, 0, 0.35);
+  --shadow-float: 0 12px 32px -6px rgba(0, 0, 0, 0.22);
+
+  /* avatars: grey identities */
+  --tint-owner: #141414; --tint-owner-ink: #ffffff;
+  --tint-coauthor: #d9d9d9; --tint-coauthor-ink: #141414;
 
   --font: "Geist", system-ui, sans-serif;
   --font-mono: "Geist Mono", monospace;
-  --fs-title: 24px; --fs-section: 16px; --fs-kpi: 30px; --fs-body: 14px; --fs-small: 12px;
+  --fs-display: 32px;          /* the screen title on the slab */
+  --fs-title: 24px; --fs-section: 16px; --fs-kpi: 36px; --fs-hero: 48px; --fs-body: 14px; --fs-small: 12px;
 
+  /* frame: the slab's margin from the window and its inner padding */
+  --frame-gap: clamp(16px, 2.4vw, 40px);   /* light field left and right of the slab: 35px at 1440 */
+  --frame-gap-y: 16px;                      /* above and below, kept small so the sidebar fits a 900px window */
+  --frame-pad: 16px;
   --sidebar-width: 256px;
   --pad: 24px;
-  --gap: 12px;
-  --card-pad: 24px;
-  --radius-card: 8px;
-  --radius-control: 6px;
+  --gap: 16px;
+  --card-pad: 28px;
+  --radius-frame: 36px;        /* the frosted slab */
+  --radius-panel: 28px;        /* the sidebar */
+  --radius-card: 24px;         /* white and near-black cards */
+  --radius-tile: 18px;         /* tiles and task cards inside or beside cards */
+  --radius-control: 12px;
   --radius-chip: 2px;
-  --radius-small: 4px;
+  --radius-small: 6px;
   --radius-pill: 999px;
   --control-height: 36px;
   --row-height: 44px;
