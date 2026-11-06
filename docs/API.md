@@ -5,8 +5,7 @@
 ## 通用规则
 
 - 请求和响应都是 JSON。
-- 登录后由 httpOnly cookie 维持会话，前端不需要处理 token。
-- 除下表标注「公开」的接口外，未登录一律返回 401。
+- 不需要登录。服务只监听本机 127.0.0.1，所有接口只对本机开放。
 - 时间用 ISO 8601（`2026-11-05T08:00:00Z`），日期用 `YYYY-MM-DD`。
 - 金额用整数分（`amountCents`），避免浮点误差。
 - 列表统一返回 `{ "items": [...] }`。
@@ -15,58 +14,39 @@
 错误格式：
 
 ```json
-{ "error": { "code": "UNAUTHORIZED", "message": "请先登录" } }
+{ "error": { "code": "NOT_FOUND", "message": "接口不存在" } }
 ```
 
 | 状态码 | 含义 |
 | --- | --- |
 | 400 | 参数错误 |
-| 401 | 未登录或密码错误 |
 | 404 | 接口或数据不存在 |
 | 500 | 服务端错误 |
 
 ## 接口总览
 
-| 方法 | 路径 | 说明 | 权限 | 状态 |
-| --- | --- | --- | --- | --- |
-| GET | `/api/health` | 健康检查 | 公开 | 已实现 |
-| POST | `/api/auth/login` | 登录 | 公开 | 已实现 |
-| POST | `/api/auth/logout` | 退出 | 公开 | 已实现 |
-| GET | `/api/auth/me` | 查询登录状态 | 公开 | 已实现 |
-| GET | `/api/public/publications` | 主页展示的已发表文章 | 公开 | 样例 |
-| GET | `/api/research/digests?date=` | 某天的精选，默认当天（Asia/Shanghai） | 登录 | 已实现 |
-| PATCH | `/api/research/digests/:id` | 收藏或取消收藏 | 登录 | 已实现 |
-| GET, POST | `/api/research/drafts` | 选题和草稿的列表、新建 | 登录 | 样例 |
-| GET, PATCH, DELETE | `/api/research/drafts/:id` | 单篇读取、修改、删除 | 登录 | 样例 |
-| POST | `/api/research/drafts/:id/polish` | AI 润色 | 登录 | 样例 |
-| GET, POST | `/api/research/submissions` | 稿件的列表、新建 | 登录 | 样例 |
-| GET, PATCH, DELETE | `/api/research/submissions/:id` | 单篇读取、修改、删除 | 登录 | 样例 |
-| GET, POST | `/api/learning/resources?type=` | 学习资料的列表、新建 | 登录 | 样例 |
-| GET, PATCH, DELETE | `/api/learning/resources/:id` | 单条读取、修改、删除 | 登录 | 样例 |
-| GET, POST | `/api/work/projects` | 接单项目的列表、新建 | 登录 | 样例 |
-| GET, PATCH, DELETE | `/api/work/projects/:id` | 单条读取、修改、删除 | 登录 | 样例 |
-| GET, POST | `/api/work/transactions?month=` | 流水的列表、新建 | 登录 | 样例 |
-| GET, PATCH, DELETE | `/api/work/transactions/:id` | 单条读取、修改、删除 | 登录 | 样例 |
-| GET | `/api/work/report?month=` | 月度收益报表 | 登录 | 样例 |
-| GET, POST | `/api/work/reminders` | 提醒事项的列表、新建 | 登录 | 样例 |
-| GET, PATCH, DELETE | `/api/work/reminders/:id` | 单条读取、修改、删除 | 登录 | 样例 |
+| 方法 | 路径 | 说明 | 状态 |
+| --- | --- | --- | --- |
+| GET | `/api/health` | 健康检查 | 已实现 |
+| GET | `/api/public/publications` | 主页展示的已发表文章 | 样例 |
+| GET | `/api/research/digests?date=` | 某天的精选，默认当天（Asia/Shanghai） | 已实现 |
+| PATCH | `/api/research/digests/:id` | 收藏或取消收藏 | 已实现 |
+| GET, POST | `/api/research/drafts` | 选题和草稿的列表、新建 | 样例 |
+| GET, PATCH, DELETE | `/api/research/drafts/:id` | 单篇读取、修改、删除 | 样例 |
+| POST | `/api/research/drafts/:id/polish` | AI 润色 | 样例 |
+| GET, POST | `/api/research/submissions` | 稿件的列表、新建 | 样例 |
+| GET, PATCH, DELETE | `/api/research/submissions/:id` | 单篇读取、修改、删除 | 样例 |
+| GET, POST | `/api/learning/resources?type=` | 学习资料的列表、新建 | 样例 |
+| GET, PATCH, DELETE | `/api/learning/resources/:id` | 单条读取、修改、删除 | 样例 |
+| GET, POST | `/api/work/projects` | 接单项目的列表、新建 | 样例 |
+| GET, PATCH, DELETE | `/api/work/projects/:id` | 单条读取、修改、删除 | 样例 |
+| GET, POST | `/api/work/transactions?month=` | 流水的列表、新建 | 样例 |
+| GET, PATCH, DELETE | `/api/work/transactions/:id` | 单条读取、修改、删除 | 样例 |
+| GET | `/api/work/report?month=` | 月度收益报表 | 样例 |
+| GET, POST | `/api/work/reminders` | 提醒事项的列表、新建 | 样例 |
+| GET, PATCH, DELETE | `/api/work/reminders/:id` | 单条读取、修改、删除 | 样例 |
 
 资源接口的约定相同：`POST` 返回 201 和新建的对象，`PATCH` 只传要改的字段并返回完整对象，`GET` 单条也返回完整对象。服务端生成的 `id`、`createdAt`、`updatedAt` 不需要前端传。
-
-## 登录
-
-`POST /api/auth/login`
-
-```json
-// 请求
-{ "password": "..." }
-// 200，同时写入会话 cookie
-{ "ok": true }
-// 401
-{ "error": { "code": "INVALID_PASSWORD", "message": "密码错误" } }
-```
-
-`GET /api/auth/me` 返回 `{ "authenticated": true }`。
 
 ## 公开主页
 
