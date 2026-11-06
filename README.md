@@ -63,7 +63,8 @@ npm run dev
 public/
   start.html             启动页（/）
   index.html             工作台（/desk）
-  images/                启动页双手素材图、工作台背景图
+  images/                启动页双手素材图、工作台背景图、侧栏 HZZ 标志（brand-mark.webp）
+  favicon.ico            浏览器标签图标，和侧栏标志同一张图
   styles/  scripts/      原型的样式和脚本（data.js 是示例数据）
   fonts/                 IBM Plex Sans、Source Serif 4、思源黑体/宋体（子集）、Geist Mono 及各自 OFL 许可
 app/api/
@@ -92,7 +93,6 @@ docs/
 - 标有「示例」的卡片和科研区仍来自 `data.js`，改动刷新后会丢失；新建菜单里标「（示例）」的项目、笔记、文献、实验也一样。
 - 每日精选接口目前没有页面在用。
 - `AGENTS.md` 由 `next dev` 自动生成，删除后还会再生成，所以一并提交。
-- 浏览器请求 `/favicon.ico` 会得到 404，不影响使用。
 
 ## 下一步
 
