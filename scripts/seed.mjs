@@ -1,4 +1,6 @@
-import { openDigestDatabase } from "../lib/research-digests-db.ts";
+import "./register.mjs";
+
+const { openDigestDatabase } = await import("../lib/research-digests-db.ts");
 
 const examples = [
   ["单细胞数据质量检查演示", "示例作者甲", "示例期刊：数据方法", "演示如何检查单细胞数据中的缺失值与批次差异。", "适合练习阅读数据质量报告，所有内容均为示例。"],

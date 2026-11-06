@@ -1,6 +1,5 @@
-import { mkdirSync } from "node:fs";
-import { dirname } from "node:path";
-import { DatabaseSync } from "node:sqlite";
+import type { DatabaseSync } from "node:sqlite";
+import { openDatabase, withDatabase } from "@/lib/database";
 
 export type Digest = {
   id: string;
@@ -33,43 +32,8 @@ export function resolveDigestDate(value: string | null, now = new Date()): strin
   return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value ? value : null;
 }
 
-export function openDigestDatabase(path = process.env.DATABASE_PATH ?? "data/app.db") {
-  if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
-  const db = new DatabaseSync(path);
-  try {
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS research_digests (
-        id TEXT PRIMARY KEY,
-        date TEXT NOT NULL,
-        position INTEGER NOT NULL,
-        title TEXT NOT NULL,
-        authors TEXT NOT NULL,
-        journal TEXT NOT NULL,
-        publishedAt TEXT NOT NULL,
-        doi TEXT,
-        url TEXT NOT NULL,
-        summaryZh TEXT NOT NULL,
-        whyRelevant TEXT NOT NULL,
-        saved INTEGER NOT NULL CHECK (saved IN (0, 1))
-      );
-      CREATE INDEX IF NOT EXISTS research_digests_date_position
-        ON research_digests (date, position, id);
-    `);
-    return db;
-  } catch (error) {
-    db.close();
-    throw error;
-  }
-}
-
-export function withDigestDatabase<T>(use: (db: DatabaseSync) => T): T {
-  const db = openDigestDatabase();
-  try {
-    return use(db);
-  } finally {
-    db.close();
-  }
-}
+export const openDigestDatabase = openDatabase;
+export const withDigestDatabase = withDatabase;
 
 function toDigest(row: DigestRow): Digest {
   return { ...row, authors: JSON.parse(row.authors), saved: row.saved === 1 };
