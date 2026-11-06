@@ -1,7 +1,10 @@
-// 研台 Lab Desk sample dataset. Every figure on screen is computed from these rows.
+// 研台 Lab Desk sample dataset: the cards that are not on real records yet are computed from these rows.
 // All names, papers, experiments, dates and hours are illustrative sample data (示例数据).
+// Tasks are not here: they are real records loaded through scripts/api.js (GET /api/tasks).
 (() => {
-  const TODAY = '2026-11-06'; // Friday
+  // the sample's own "today". Sample cards (research countdowns, this week's hours, the calendar) are drawn
+  // as of this date; everything on real records uses the real date in Asia/Shanghai (API.today()).
+  const SAMPLE_TODAY = '2026-11-06'; // Friday
   const DAY = 86400000;
   const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / DAY);
 
@@ -48,22 +51,6 @@
     { id: 'g2', text: '读完 8 篇论文', done: false, progress: null }, // progress filled below from papers
     { id: 'g3', text: '完成文献综述框架', done: false },
     { id: 'g4', text: '跑完第 4 批实验', done: false },
-  ];
-
-  // tasks: state 进行中 / 待开始 / 已完成 / 归档
-  const tasks = [
-    { id: 't1', title: '回复导师关于实验设计的邮件', state: '进行中', due: '2026-11-06', project: '小样本分割基准', icon: 'mail', remind: true, created: '2026-11-04' },
-    { id: 't2', title: '整理第 3 批实验数据', state: '进行中', due: '2026-11-07', project: '小样本分割基准', icon: 'flask', remind: false, created: '2026-11-04' },
-    { id: 't3', title: '预约体检', state: '进行中', due: '2026-11-10', project: '个人', icon: 'heart', remind: true, created: '2026-11-02' },
-    { id: 't4', title: '准备 11月11日 组会幻灯片', state: '待开始', due: '2026-11-10', project: '稀疏注意力检索', icon: 'doc', created: '2026-11-05' },
-    { id: 't5', title: '写实验章节第 2 节', state: '待开始', due: '2026-11-12', project: '稀疏注意力检索', icon: 'doc', created: '2026-11-05' },
-    { id: 't6', title: '核对十一月房租转账', state: '待开始', due: '2026-11-15', project: '家庭记账整理', icon: 'doc', created: '2026-11-03' },
-    { id: 't7', title: '整理首页项目截图', state: '待开始', due: '2026-11-20', project: '个人主页改版', icon: 'doc', created: '2026-11-01' },
-    { id: 't8', title: '下载多模态原始数据', state: '待开始', due: '2026-11-21', project: '多模态数据清洗工具', icon: 'flask', created: '2026-11-01' },
-    ...['提交组会报告', '复现基线 B2', '修正路由层 bug', '读完第 5 篇论文', '更新简历', '整理 Zotero 标签', '回复合作者周的批注', '补交十月报销', '检查 EXP-012 日志', '写方法章节小结', '订下周组会会议室', '备份实验数据盘']
-      .map((title, i) => ({ id: 'd' + (i + 1), title, state: '已完成', due: `2026-11-0${1 + (i % 6)}`, project: i % 3 ? '稀疏注意力检索' : '个人', icon: 'doc', created: '2026-10-28' })),
-    { id: 'a1', title: '十月月度复盘', state: '归档', due: '2026-10-31', project: '个人', icon: 'doc', created: '2026-10-25' },
-    { id: 'a2', title: '退回旧版数据集许可', state: '归档', due: '2026-10-18', project: '小样本分割基准', icon: 'doc', created: '2026-10-10' },
   ];
 
   // papers: illustrative titles only, no real publications
@@ -148,12 +135,10 @@
     { id: 'n3', text: '11月11日 14:00 组会', when: '周三提醒' },
   ];
 
-  const tasksDoneBeforeNov = 174; // completed before 1 Nov
-
   // ---------- derived figures (one variable per fact) ----------
   const sum = (a) => a.reduce((s, v) => s + (v || 0), 0);
   const D = {
-    TODAY, STAGES, owner, research, projects, weeks, plan, goals, tasks, papers, experiments, manuscript, researchDates, events, docs, datasets,
+    SAMPLE_TODAY, STAGES, owner, research, projects, weeks, plan, goals, papers, experiments, manuscript, researchDates, events, docs, datasets,
     months, monthly, notifications, personalNov, octSamePeriodResearch, daysBetween,
   };
   D.weekTotal = (k) => ({ work: sum(weeks[k].work), research: sum(weeks[k].research) });
@@ -167,18 +152,17 @@
     done: projects.filter((p) => p.status === '已完成').length,
     paused: projects.filter((p) => p.status === '暂停').length,
   });
-  D.tasksDoneAllTime = () => tasksDoneBeforeNov + tasks.filter((t) => t.state === '已完成').length;
   D.paperCounts = () => ({
     todo: papers.filter((p) => p.status === '待读').length,
     reading: papers.filter((p) => p.status === '在读').length,
     annotated: papers.filter((p) => p.status === '已批注').length,
   });
   D.papersRead = () => papers.filter((p) => p.status !== '待读').length;
-  D.daysLeft = (date) => daysBetween(TODAY, date);
+  D.daysLeft = (date) => daysBetween(SAMPLE_TODAY, date);   // for sample rows only
   D.draft = () => research.find((r) => r.id === manuscript.research);
   monthly.work[5] = D.month().work;
   monthly.research[5] = D.month().research;
-  monthly.tasks[5] = tasks.filter((t) => t.state === '已完成').length;
+  monthly.tasks[5] = 12; // sample: tasks completed 1 to 6 Nov
 
   // ---------- assertions: figures that must agree ----------
   const pc = D.projectCounts();
@@ -187,12 +171,10 @@
   console.assert(D.month().research === D.weekTotal('this').research + 1 && D.month().research === 15, 'November research hours');
   console.assert(Math.round((D.month().work / plan.work) * 100) === 22 && Math.round((D.month().research / plan.research) * 100) === 25 && Math.round((personalNov / plan.personal) * 100) === 20, 'month ratios');
   console.assert(goals.filter((g) => g.done).length === 1 && goals.length === 4, 'goals 1/4');
-  console.assert(tasks.filter((t) => t.state === '进行中').length === 3, 'tasks in progress');
   const pcs = D.paperCounts();
   console.assert(papers.length === 8 && pcs.todo === 3 && pcs.reading === 2 && pcs.annotated === 3 && D.papersRead() === 5, 'papers split');
   console.assert(sum(manuscript.sections.map((s) => s.words)) === manuscript.words && manuscript.target - manuscript.words === 3180, 'manuscript words');
   console.assert(D.daysLeft(D.draft().due) === 12, 'draft is 12 days away');
-  console.assert(D.tasksDoneAllTime() === 186, 'tasks done all time');
   console.assert(docs.length === 14 && docs.filter((d) => d.folder === '科研').length === 8, 'docs split');
   research.forEach((r) => console.assert(researchDates.some((d) => d.date === r.due), 'research due date on calendar', r.id));
 
